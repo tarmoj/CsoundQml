@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QTime>
 
 #ifdef Q_OS_ANDROID
 	#include "AndroidCsound.hpp"
@@ -25,7 +26,8 @@ public:
     void initConnections();
 
 Q_SIGNALS:
-	void csoundMessage(QString message);
+	void newCsoundMessage(QString message);
+	void newHeartBeat(int time);
 
 public Q_SLOTS:
 	void setChannel(QString channel, double value);
@@ -37,6 +39,9 @@ public Q_SLOTS:
 	void compileOrc(QString code);
     void handleUiCommand(int command);
 
+private Q_SLOTS:
+	void timerSlot();
+
 private:
 #ifdef Q_OS_ANDROID
 	AndroidCsound  *cs ;
@@ -46,6 +51,8 @@ private:
 	bool stopNow, isRunning;
     QString SFDIR;
     QSharedPointer<ControlDeskReplica> reptr;// holds reference to replica
+	QTimer *heartBeatTimer;
+	QTime time;
 };
 
 #endif // CsoundEngine_H

@@ -11,7 +11,10 @@ int main(int argc, char *argv[])
     QRemoteObjectNode repNode; // create remote object node
     repNode.connectToNode(QUrl(QStringLiteral("local:controlDesk"))); // connect with remote host node
 
+
     ptr.reset(repNode.acquire<ControlDeskReplica>()); // acquire replica of source from host node
+
+	qDebug() << ptr.data()->uiCommand();
 
     // create Csound and put it into a thread
     QThread * csoundThread = new QThread();
@@ -25,7 +28,7 @@ int main(int argc, char *argv[])
 
     //QObject::connect(csoundThread, &QThread::started, cs, &CsoundEngine::play);
     csoundThread->start();
-    //cs->play("/home/tarmo/tarmo/csound/cs-lugu.csd");
+	//cs->play("/home/tarmo/tarmo/csound/cs-lugu.csd");
 
     return a.exec();
 }

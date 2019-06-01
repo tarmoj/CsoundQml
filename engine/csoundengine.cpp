@@ -31,9 +31,13 @@
 CsoundEngine::CsoundEngine(QSharedPointer<ControlDeskReplica> ptr, QObject *parent) : QObject(parent),
     reptr(ptr)
 {
-	stopNow = false;
+	stopNow = false; // TODO: style -  initalize in class definition
 	isRunning = false;
 	cs = nullptr;
+//	heartBeatTimer = new QTimer(this);
+//	heartBeatTimer->start(1000);
+//	connect(heartBeatTimer, SIGNAL(timeout()), this, SLOT(timerSlot())  );
+//	time.start();
     initConnections();
 
 }
@@ -69,10 +73,11 @@ void CsoundEngine::play(QString csd) {
 	while (cs->GetMessageCnt()>0) { // HOW to get error message here?
         message += QString(cs->GetFirstMessage()).simplified() + "\n";
         qDebug()<< message;
+		emit newCsoundMessage(message);
 		cs->PopFirstMessage();
 	}
 	if (!message.isEmpty()) {
-		emit csoundMessage(message.trimmed());
+		emit newCsoundMessage(message.trimmed());
 	}
 
     cs->Start();
@@ -85,7 +90,7 @@ void CsoundEngine::play(QString csd) {
 			if (cs->GetMessageCnt()>0) {
                 message = QString(cs->GetFirstMessage());
                 qDebug()<< message;
-				emit csoundMessage(message.trimmed());
+				emit newCsoundMessage(message.trimmed());
 				cs->PopFirstMessage();
 			}
 
@@ -148,6 +153,10 @@ QString CsoundEngine::getStringChannel(QString channel)
 void CsoundEngine::initConnections()
 {
     connect(reptr.data() , SIGNAL(uiCommandChanged(int)), this, SLOT(handleUiCommand(int))  );
+	connect(this, SIGNAL(newHeartBeat(int)), reptr.data(), SLOT(heartBeat(int))   );
+	connect(this, SIGNAL(newCsoundMessage(QString)), reptr.data(), SLOT(handleCsoundMessage(QString))   );
+
+
 }
 
 void CsoundEngine::scoreEvent(QString event)
@@ -170,10 +179,23 @@ void CsoundEngine::compileOrc(QString code)
 
 void CsoundEngine::handleUiCommand(int command)
 {
-    switch (command) {
+	qDebug()<< Q_FUNC_INFO << command;
+	switch (command) {
         case 0: stop(); break;
         case 1: play("/home/tarmo/tarmo/csound/cs-lugu.csd");
 
-    }
+	}
+}
+
+void CsoundEngine::timerSlot()
+{
+	if ( !reptr) {
+		emit newHeartBeat(time.elapsed());
+		//or maybe: reptr.data()->pushLastHeartBeat(now);
+
+	}
+	int now = time.elapsed();
+	qDebug() << now;
+
 }
 

@@ -15,8 +15,10 @@ public:
 
     virtual void heartBeat(int time);
     virtual void setEngineState(int state);
+	virtual void handleCsoundMessage(QString message);
 
 signals:
+	void newCsoundMessage(QString message);
 
 public Q_SLOTS:
     void start();

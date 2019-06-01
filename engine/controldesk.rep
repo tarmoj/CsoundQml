@@ -3,6 +3,8 @@
 class ControlDesk
 {
     PROP(int uiCommand=0); // PLAY, STOP, PAUSE, RENDER, RECORD
+	PROP(int lastHeartBeat=0); // time in milliseconds, check with timer in UI
     SLOT(void setEngineState(int state));
-    SLOT(void heartBeat(int time));
+	SLOT(void heartBeat(int time));
+	SLOT(void handleCsoundMessage(QString message));
 };

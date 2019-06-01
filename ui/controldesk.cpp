@@ -21,15 +21,14 @@ void ControlDesk::setEngineState(int state)
 
 void ControlDesk::handleCsoundMessage(QString message)
 {
-	qDebug()<< Q_FUNC_INFO << message;
+	//qDebug()<< Q_FUNC_INFO << message;
 	emit newCsoundMessage(message);
 }
 
 void ControlDesk::start()
 {
     qDebug()<< Q_FUNC_INFO;
-	//setUiCommand(PLAY);
-	emit uiCommandChanged(PLAY);
+	setUiCommand(PLAY);
 }
 
 void ControlDesk::stop()

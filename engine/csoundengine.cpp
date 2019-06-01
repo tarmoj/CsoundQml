@@ -34,10 +34,10 @@ CsoundEngine::CsoundEngine(QSharedPointer<ControlDeskReplica> ptr, QObject *pare
 	stopNow = false; // TODO: style -  initalize in class definition
 	isRunning = false;
 	cs = nullptr;
-//	heartBeatTimer = new QTimer(this);
-//	heartBeatTimer->start(1000);
-//	connect(heartBeatTimer, SIGNAL(timeout()), this, SLOT(timerSlot())  );
-//	time.start();
+	heartBeatTimer = new QTimer(this);
+	heartBeatTimer->start(1000);
+	connect(heartBeatTimer, SIGNAL(timeout()), this, SLOT(timerSlot())  );
+	time.start();
     initConnections();
 
 }
@@ -189,13 +189,14 @@ void CsoundEngine::handleUiCommand(int command)
 
 void CsoundEngine::timerSlot()
 {
-	if ( !reptr) {
-		emit newHeartBeat(time.elapsed());
-		//or maybe: reptr.data()->pushLastHeartBeat(now);
 
-	}
 	int now = time.elapsed();
-	qDebug() << now;
+
+	if ( reptr) {
+		emit newHeartBeat(now);
+		qDebug() << now;
+		//or maybe: reptr.data()->pushLastHeartBeat(now);
+	}
 
 }
 

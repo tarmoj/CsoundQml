@@ -1,8 +1,1 @@
-#include <QtCore>
-
-class ControlDesk
-{
-    PROP(int uiCommand=0); // PLAY, STOP, PAUSE, RENDER, RECORD
-    SLOT(void setEngineState(int state));
-    SLOT(void heartBeat(int time));
-};
+/home/tarmo/tarmo/programm/qt-projects/CsoundQml/engine/controldesk.rep

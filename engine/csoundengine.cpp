@@ -195,7 +195,6 @@ void CsoundEngine::timerSlot()
 	if ( reptr) {
 		emit newHeartBeat(now);
 		qDebug() << now;
-		//or maybe: reptr.data()->pushLastHeartBeat(now);
 	}
 
 }

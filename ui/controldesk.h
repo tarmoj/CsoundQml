@@ -1,6 +1,9 @@
 #ifndef CONTROLDESK_H
 #define CONTROLDESK_H
 
+#include <QTimer>
+#include <QProcess>
+
 #include "rep_controldesk_source.h"
 
 #define STOP 0
@@ -23,10 +26,18 @@ signals:
 public Q_SLOTS:
     void start();
     void stop();
+	void startEngine();
+	void stopEngine();
+	void restartEngine();
+	void checkEngine();
+	void checkEngineProcess(QProcess::ProcessState newState);
 
 private:
     int lastEngineTime;
     int engineState;
+	QTimer * checkEngineTimer;
+	QProcess * engineProcess;
+	QTime time;
 
 };
 

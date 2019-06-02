@@ -13,6 +13,10 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         Page1Form {
+            engineButton.onCheckedChanged: {
+                if (engineButton.checked) controlDesk.startEngine()
+                else controlDesk.stopEngine();
+            }
             startButton.onClicked: controlDesk.start()
             stopButton.onClicked: controlDesk.stop()
         }

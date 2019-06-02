@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 Page {
     width: 600
     height: 400
+    property alias engineButton: engineButton
     property alias stopButton: stopButton
     property alias startButton: startButton
 
@@ -22,6 +23,12 @@ Page {
         Button {
             id: stopButton
             text: "Stop"
+        }
+
+        Button {
+            id: engineButton
+            text: qsTr("Engine")
+            checkable: true
         }
     }
 }

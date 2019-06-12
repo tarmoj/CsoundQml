@@ -35,9 +35,7 @@ CsoundEngine::CsoundEngine(QSharedPointer<ControlDeskReplica> ptr, QObject *pare
 	isRunning = false;
 	cs = nullptr;
 	heartBeatTimer = new QTimer(this);
-	heartBeatTimer->start(1000);
-	connect(heartBeatTimer, SIGNAL(timeout()), this, SLOT(timerSlot())  );
-	time.start();
+
     initConnections();
 
 }
@@ -47,28 +45,46 @@ CsoundEngine::~CsoundEngine()
 
 }
 
+void CsoundEngine::initConnections()
+{
+	heartBeatTimer->start(1000);
+	connect(heartBeatTimer, SIGNAL(timeout()), this, SLOT(timerSlot())  );
+
+	connect(this, SIGNAL(newHeartBeat()), reptr.data(), SLOT(heartBeat())   );
+	connect(this, SIGNAL(newCsoundMessage(QString)), reptr.data(), SLOT(handleCsoundMessage(QString))   );
+	connect(this, SIGNAL(newEngineState(int) ), reptr.data(), SLOT(setEngineState(int))   );
+
+	connect(reptr.data(), SIGNAL(compileCsdText(QString)), this, SLOT(play(QString)));
+
+	connect(reptr.data(), SIGNAL(stop()), this, SLOT(stop()) );
+	connect(reptr.data(), SIGNAL(newControlChannelValue(QString, double) ), this, SLOT(setChannel(QString, double))  );
+	connect(reptr.data(), SIGNAL(crash()), this, SLOT(crash()) );
 
 
-void CsoundEngine::play(QString csd) {
+}
+
+
+
+void CsoundEngine::play(QString csdText) {
 #ifdef Q_OS_ANDROID
 	cs = new AndroidCsound();
 #else
 	cs = new Csound();
 #endif
     // set options
-    QString csoundOptions= "-odac -d";
+//    QString csoundOptions= "-odac -d";
 
-    foreach (QString option, csoundOptions.split(" ")) {
-        qDebug()<<"Setting Csound option: " << option;
-        cs->SetOption(option.toLocal8Bit().data());
-    }
+//    foreach (QString option, csoundOptions.split(" ")) {
+//        qDebug()<<"Setting Csound option: " << option;
+//        cs->SetOption(option.toLocal8Bit().data());
+//    }
 
 	// must check here, if it is already running. stop if is running. Tink, see CsoundQT and test....
 	QString message;
     cs->CreateMessageBuffer(0); // also to stdout for debugging
 
 
-    int result = cs->CompileCsd(csd.toLocal8Bit());
+	int result = cs->CompileCsdText(csdText.toLocal8Bit());//cs->CompileCsd(csd.toLocal8Bit());
 
 	while (cs->GetMessageCnt()>0) { // HOW to get error message here?
         message += QString(cs->GetFirstMessage()).simplified() + "\n";
@@ -84,6 +100,7 @@ void CsoundEngine::play(QString csd) {
 
     if (!result ) {
 		isRunning = true;
+		emit newEngineState(PLAYING);
 
 		while (cs->PerformKsmps()==0 && !stopNow) {
 
@@ -98,9 +115,10 @@ void CsoundEngine::play(QString csd) {
 		}
 		qDebug()<<"Stopping csound";
 		cs->Stop();
+		emit newEngineState(STOPPED);
 
 	} else {
-        qDebug()<<"Could not compile and strart with file: " << csd;
+		qDebug()<<"Could not compile csdText";
 	}
 	cs->DestroyMessageBuffer();
 	delete cs;
@@ -150,14 +168,7 @@ QString CsoundEngine::getStringChannel(QString channel)
 
 }
 
-void CsoundEngine::initConnections()
-{
-    connect(reptr.data() , SIGNAL(uiCommandChanged(int)), this, SLOT(handleUiCommand(int))  );
-	connect(this, SIGNAL(newHeartBeat(int)), reptr.data(), SLOT(heartBeat(int))   );
-	connect(this, SIGNAL(newCsoundMessage(QString)), reptr.data(), SLOT(handleCsoundMessage(QString))   );
 
-
-}
 
 void CsoundEngine::scoreEvent(QString event)
 {
@@ -174,28 +185,20 @@ void CsoundEngine::setSFDIR(QUrl dir)
 void CsoundEngine::compileOrc(QString code)
 {
 	if (cs)
-        cs->CompileOrc(code.toLocal8Bit());
+		cs->CompileOrc(code.toLocal8Bit());
 }
 
-void CsoundEngine::handleUiCommand(int command)
+void CsoundEngine::crash()
 {
-	qDebug()<< Q_FUNC_INFO << command;
-	switch (command) {
-        case 0: stop(); break;
-        case 1: play("/home/tarmo/tarmo/csound/cs-lugu.csd");
-
-	}
+	QList <quint8> array;
+	array[10] = 8; // index out of range crash
 }
+
 
 void CsoundEngine::timerSlot()
 {
-
-	int now = time.elapsed();
-
 	if ( reptr) {
-		emit newHeartBeat(now);
-		qDebug() << now;
+		emit newHeartBeat();
 	}
-
 }
 

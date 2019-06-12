@@ -10,11 +10,7 @@ int main(int argc, char *argv[])
     QSharedPointer<ControlDeskReplica> ptr; // shared pointer to hold source replica
     QRemoteObjectNode repNode; // create remote object node
     repNode.connectToNode(QUrl(QStringLiteral("local:controlDesk"))); // connect with remote host node
-
-
     ptr.reset(repNode.acquire<ControlDeskReplica>()); // acquire replica of source from host node
-
-	qDebug() << ptr.data()->uiCommand();
 
     // create Csound and put it into a thread
     QThread * csoundThread = new QThread();
@@ -24,9 +20,8 @@ int main(int argc, char *argv[])
 
     QObject::connect(csoundThread, &QThread::finished, cs, &CsoundEngine::deleteLater);
     QObject::connect(csoundThread, &QThread::finished, csoundThread, &QThread::deleteLater); // somehow exiting from Csound is not clear yet, the thread gets destoyed when Csoun is still running.
-    //connect(QApplication::instance(), QApplication::aboutToQuit,cs,&CsoundEngine::stop );
+	//connect(QApplication::instance(), QApplication::aboutToQuit,cs,&CsoundEngine::stop );
 
-    //QObject::connect(csoundThread, &QThread::started, cs, &CsoundEngine::play);
     csoundThread->start();
 	//cs->play("/home/tarmo/tarmo/csound/cs-lugu.csd");
 

@@ -2,25 +2,32 @@
 #include "controldesk.h"
 
 ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
-	lastEngineTime(0), engineState(0),
+	engineState(LOST),
 	checkEngineTimer(new QTimer(this)), engineProcess(new QProcess(this))
 {
-	connect(checkEngineTimer, SIGNAL(timeout()), this, SLOT(checkEngine())  );
-	//startEngine();
+	startEngine();
+
 }
 
-void ControlDesk::heartBeat(int time_) // NB! must be called by timer
+void ControlDesk::heartBeat() // NB! must be called by timer
 {
-	qDebug()<< "Hearbeat in source node: " << time_;
-	lastEngineTime = time_;
-	time.restart();
-
+	heartBeatTime.restart();
 }
 
 void ControlDesk::setEngineState(int state)
 {
     qDebug()<< Q_FUNC_INFO << state;
 	engineState = state;
+	switch (state) {
+		case PLAYING: emit newEngineState(tr("playing")); break;
+		case STOPPED: emit newEngineState(tr("stopped")); break;
+		case PAUSED: emit newEngineState(tr("paused")); break;
+		case RENDERING: emit newEngineState(tr("rendering")); break;
+		case RECORDING: emit newEngineState(tr("recording")); break;
+		case RUNNING: emit newEngineState(tr("running")); break;
+		case LOST: emit newEngineState(tr("not running")); break;
+
+	}
 }
 
 void ControlDesk::handleCsoundMessage(QString message)
@@ -29,25 +36,18 @@ void ControlDesk::handleCsoundMessage(QString message)
 	emit newCsoundMessage(message);
 }
 
-void ControlDesk::start()
+void ControlDesk::receiveChannelValue(QString channel, QVariant value)
 {
-    qDebug()<< Q_FUNC_INFO;
-	setUiCommand(PLAY);
+	qDebug()<< Q_FUNC_INFO << channel << " " << value;
+	// put into hash and emit signal receivedChannelValue
 }
 
-void ControlDesk::stop()
-{
-    qDebug()<< Q_FUNC_INFO;
-	setUiCommand(STOP);
-}
 
 void ControlDesk::startEngine()
 {
-	QString executable = "xterm  -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine"; // TODO: make universal
-	//engineProcess->start(executable);
-	engineProcess->execute(executable);
-	lastEngineTime = 0;
-	time.start();
+	QString executable = "xterm  -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
+	engineProcess->start(executable);
+	heartBeatTime.start();
 	connect(engineProcess, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(checkEngineProcess(QProcess::ProcessState))  );
 	checkEngineTimer->start(1000);
 }
@@ -55,25 +55,91 @@ void ControlDesk::startEngine()
 void ControlDesk::stopEngine()
 {
 	engineProcess->close();
-	lastEngineTime = 0;
 }
 
 void ControlDesk::restartEngine()
 {
-
+	stopEngine();
+	QThread::sleep(1);
+	startEngine();
 }
 
 void ControlDesk::checkEngine()
 {
-
-	qDebug()<< Q_FUNC_INFO << lastEngineTime  << " " << time.elapsed();
-	//  this is stupid. should be handled vie QProcess:stateChanged
+	qint64 elapsed = heartBeatTime.elapsed();
+	//qDebug()<< Q_FUNC_INFO << elapsed;
+	if (elapsed > 2000) {
+		qDebug() << "Engine seems not to be running ";
+	}
+	//  this is kind of stupid. should be handled via QProcess:stateChanged. But for any case...
 }
 
 void ControlDesk::checkEngineProcess(QProcess::ProcessState newState)
 {
 	qDebug()<< Q_FUNC_INFO << newState;
+	switch (newState) {
+		case QProcess::Starting: emit newEngineState(tr("starting")); break;
+	case QProcess::Running:  setEngineState(RUNNING); break;
+		case QProcess::NotRunning:  setEngineState(LOST); break;
 
+	}
+
+
+}
+
+void ControlDesk::compileCsd(QString csdText)
+{
+	// for now:
+	if (csdText.isEmpty()) {
+		csdText = getCsdTemplate();
+	}
+
+	emit compileCsdText(csdText);
+
+}
+
+
+QString ControlDesk::getCsdTemplate()
+{
+	QString csdTemplate =
+R"(
+<CsoundSynthesizer>
+<CsOptions>
+-odac -d
+</CsOptions>
+<CsInstruments>
+
+sr = 44100
+ksmps = 32
+nchnls = 2
+0dbfs = 1
+
+;;channels
+chn_k "test",3
+
+chnset 440, "freq"
+
+alwayson "controller"
+instr controller
+	ktrig metro 1/2
+	schedkwhen ktrig, 0, 0, "sound", 0, 0.5
+endin
+
+instr sound
+	ifreq chnget "freq"
+	iharm = int(random:i( 1, 15) )
+	chnset iharm, "test"
+	asig buzz 0.2*adsr:a(0.1,0.1, 0.5, p3/2), ifreq, iharm, -1
+	outs asig, asig
+endin
+
+</CsInstruments>
+<CsScore>
+
+</CsScore>
+</CsoundSynthesizer>
+)";
+	return csdTemplate;
 }
 
 

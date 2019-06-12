@@ -3,6 +3,7 @@
 
 #include <QTimer>
 #include <QProcess>
+#include <QElapsedTimer>
 
 #include "rep_controldesk_source.h"
 
@@ -16,28 +17,30 @@ class ControlDesk : public ControlDeskSimpleSource
 public:
     explicit ControlDesk(QObject *parent = nullptr);
 
-    virtual void heartBeat(int time);
+	virtual void heartBeat();
     virtual void setEngineState(int state);
 	virtual void handleCsoundMessage(QString message);
+	virtual void receiveChannelValue(QString channel, QVariant value);
 
 signals:
 	void newCsoundMessage(QString message);
+	void newEngineState(QString state);
 
 public Q_SLOTS:
-    void start();
-    void stop();
 	void startEngine();
 	void stopEngine();
 	void restartEngine();
 	void checkEngine();
 	void checkEngineProcess(QProcess::ProcessState newState);
+	void compileCsd(QString csdText);
+	//void compileCsd(QUrl csdFile);
+	QString getCsdTemplate();
 
 private:
-    int lastEngineTime;
     int engineState;
 	QTimer * checkEngineTimer;
 	QProcess * engineProcess;
-	QTime time;
+	QElapsedTimer heartBeatTime;
 
 };
 

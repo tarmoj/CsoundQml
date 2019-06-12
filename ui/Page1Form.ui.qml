@@ -1,34 +1,53 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 1.4 as QC1
 
 Page {
     width: 600
     height: 400
-    property alias engineButton: engineButton
-    property alias stopButton: stopButton
-    property alias startButton: startButton
+    property alias csdArea: csdArea
+    property alias messageArea: messageArea
 
     header: Label {
-        text: qsTr("Page 1")
-        font.pixelSize: Qt.application.font.pixelSize * 2
+        text: qsTr("Editor")
+        font.pixelSize: Qt.application.font.pixelSize * 1.5
         padding: 10
     }
 
-    Row {
-        spacing: 5
-        Button {
-            id: startButton
-            text: "Start"
-        }
-        Button {
-            id: stopButton
-            text: "Stop"
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 6
+        anchors.margins: 10
+
+        QC1.TextArea {
+            id: csdArea
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: parent.height * 0.6
+
+            text: "Csd file"
         }
 
-        Button {
-            id: engineButton
-            text: qsTr("Engine")
-            checkable: true
+        //        ScrollView {
+        //            id: messagesView
+        //            Layout.fillWidth: true
+        //            Layout.fillHeight: true
+        //            Layout.maximumHeight: parent.height * 0.4
+
+        //            clip: true
+        QC1.TextArea {
+            id: messageArea
+            visible: true
+            readOnly: true
+            //anchors.fill: parent
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: parent.height * 0.4
+            font.pointSize: 8
+            font.family: "Courier"
+            text: "Csound messages"
         }
+        //        }
     }
 }

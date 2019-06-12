@@ -27,17 +27,18 @@ public:
 
 Q_SIGNALS:
 	void newCsoundMessage(QString message);
-	void newHeartBeat(int time);
+	void newHeartBeat();
+	void newEngineState(int state);
 
 public Q_SLOTS:
 	void setChannel(QString channel, double value);
-    void play(QString csd);
+	void play(QString csdText);
 	void stop();
     void pause();
 	void scoreEvent(QString event);
 	void setSFDIR(QUrl dir);
 	void compileOrc(QString code);
-    void handleUiCommand(int command);
+	void crash(); // for testing
 
 private Q_SLOTS:
 	void timerSlot();

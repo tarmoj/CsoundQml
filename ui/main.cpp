@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 	QObject::connect(ui, SIGNAL(newControlChannelValue(QString, double) ), &controlDesk, SIGNAL(newControlChannelValue(QString, double))  );
 	QObject::connect(ui, SIGNAL(newStringChannelValue(QString, QString) ), &controlDesk, SIGNAL(newStringChannelValue(QString, QString))  );
 	QObject::connect(ui, SIGNAL(crash()), &controlDesk, SIGNAL(crash())  );
+	QObject::connect(ui, SIGNAL(requestChannelValue(QString)), &controlDesk, SIGNAL(requestChannelValue(QString))  );
 
 	// set source node
 	 QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:controlDesk")));

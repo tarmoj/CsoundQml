@@ -1,4 +1,4 @@
-
+#include <QCoreApplication>
 #include "controldesk.h"
 
 ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
@@ -36,16 +36,20 @@ void ControlDesk::handleCsoundMessage(QString message)
 	emit newCsoundMessage(message);
 }
 
-void ControlDesk::receiveChannelValue(QString channel, QVariant value)
+void ControlDesk::receiveChannelValue(QString channel, double value) // QVariant
 {
 	qDebug()<< Q_FUNC_INFO << channel << " " << value;
 	// put into hash and emit signal receivedChannelValue
+	channelValues.insert(channel, value);
+	emit channelValueReceived(channel, value);
 }
 
 
 void ControlDesk::startEngine()
 {
-	QString executable = "xterm  -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
+	QString path =  QCoreApplication::applicationDirPath();
+	//QString executable = path + "/" + "engine"; //
+	QString executable = "/home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
 	engineProcess->start(executable);
 	heartBeatTime.start();
 	connect(engineProcess, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(checkEngineProcess(QProcess::ProcessState))  );
@@ -140,6 +144,23 @@ endin
 </CsoundSynthesizer>
 )";
 	return csdTemplate;
+}
+
+void ControlDesk::testSlot(QString channel)
+{
+	qDebug() << Q_FUNC_INFO << channel;
+	emit requestChannelValue(channel);
+}
+
+double ControlDesk::getChannelValue(QString channel)
+{
+	double value = -1;
+	if ( channelValues.contains(channel) ) {
+		value = channelValues[channel];
+	} else {
+		qDebug() << "Channel " << channel << " is unknown. Have you requested it?";
+	}
+	return  value;
 }
 
 

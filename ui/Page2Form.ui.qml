@@ -5,6 +5,8 @@ Page {
     id: page
     width: 600
     height: 400
+    property alias harmonicsField: harmonicsField
+    property alias getChannelButton: getChannelButton
     property alias slider: slider
 
     header: Label {
@@ -46,6 +48,11 @@ Page {
             width: 40
             text: qsTr("?")
             horizontalAlignment: Text.AlignRight
+        }
+
+        Button {
+            id: getChannelButton
+            text: qsTr("Get")
         }
     }
 }

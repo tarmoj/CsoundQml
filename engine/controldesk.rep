@@ -14,7 +14,7 @@ class ControlDesk
     SLOT(void setEngineState(int state));
 	SLOT(void heartBeat());
 	SLOT(void handleCsoundMessage(QString message));
-	SLOT(void receiveChannelValue(QString channel, QVariant value));
+	SLOT(void receiveChannelValue(QString channel, double value)); // QVariant value?
 
 	SIGNAL(compileCsdText(QString text));
 	SIGNAL(stop());

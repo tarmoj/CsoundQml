@@ -29,6 +29,7 @@ Q_SIGNALS:
 	void newCsoundMessage(QString message);
 	void newHeartBeat();
 	void newEngineState(int state);
+	void newChannelValue(QString channel, double value); // QVariant?
 
 public Q_SLOTS:
 	void setChannel(QString channel, double value);
@@ -39,6 +40,7 @@ public Q_SLOTS:
 	void setSFDIR(QUrl dir);
 	void compileOrc(QString code);
 	void crash(); // for testing
+	void handleChannelRequest(QString channel);
 
 private Q_SLOTS:
 	void timerSlot();

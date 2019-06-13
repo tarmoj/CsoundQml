@@ -29,25 +29,26 @@ Page {
             text: "Csd file"
         }
 
-        //        ScrollView {
-        //            id: messagesView
-        //            Layout.fillWidth: true
-        //            Layout.fillHeight: true
-        //            Layout.maximumHeight: parent.height * 0.4
+//        ScrollView {
+//            id: messagesView
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.maximumHeight: parent.height * 0.4
 
-        //            clip: true
-        QC1.TextArea {
-            id: messageArea
-            visible: true
-            readOnly: true
-            //anchors.fill: parent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.maximumHeight: parent.height * 0.4
-            font.pointSize: 8
-            font.family: "Courier"
-            text: "Csound messages"
-        }
-        //        }
+//            clip: true
+            QC1. TextArea {
+                id: messageArea
+                visible: true
+                readOnly: true
+                //ScrollBar.vertical.position: 1
+                //anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumHeight: parent.height * 0.4
+                font.pointSize: 8
+                font.family: "Courier"
+                text: "Csound messages"
+            }
+//        }
     }
 }

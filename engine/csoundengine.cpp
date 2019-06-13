@@ -1,31 +1,12 @@
-/*
-	Copyright (C) 2016 Tarmo Johannes
-	trmjhnns@gmail.com
-
-	This file is part of vClick.
-
-	vClick is free software; you can redistribute it and/or modify it under
-	the terms of the GNU GENERAL PUBLIC LICENSE Version 3, published by
-	Free Software Foundation, Inc. <http://fsf.org/>
-
-	vClick is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with vClick; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-	02111-1307 USA
-*/
 #include "csoundengine.h"
 #include <QDebug>
 #include <QCoreApplication>
 #include <QThread>
+
 // remoteobject stuff:
 #include <QSharedPointer>
 #include <QRemoteObjectNode>
-#include <qremoteobjectdynamicreplica.h>
+//#include <qremoteobjectdynamicreplica.h>
 
 
 CsoundEngine::CsoundEngine(QSharedPointer<ControlDeskReplica> ptr, QObject *parent) : QObject(parent),
@@ -53,12 +34,16 @@ void CsoundEngine::initConnections()
 	connect(this, SIGNAL(newHeartBeat()), reptr.data(), SLOT(heartBeat())   );
 	connect(this, SIGNAL(newCsoundMessage(QString)), reptr.data(), SLOT(handleCsoundMessage(QString))   );
 	connect(this, SIGNAL(newEngineState(int) ), reptr.data(), SLOT(setEngineState(int))   );
+	connect(this, SIGNAL(newChannelValue(QString, double) ), reptr.data(), SLOT(receiveChannelValue(QString, double) )   );
 
 	connect(reptr.data(), SIGNAL(compileCsdText(QString)), this, SLOT(play(QString)));
 
 	connect(reptr.data(), SIGNAL(stop()), this, SLOT(stop()) );
 	connect(reptr.data(), SIGNAL(newControlChannelValue(QString, double) ), this, SLOT(setChannel(QString, double))  );
 	connect(reptr.data(), SIGNAL(crash()), this, SLOT(crash()) );
+	connect(reptr.data(), SIGNAL(requestChannelValue(QString)), this, SLOT(handleChannelRequest(QString) ) );
+
+
 
 
 }
@@ -79,7 +64,7 @@ void CsoundEngine::play(QString csdText) {
 //        cs->SetOption(option.toLocal8Bit().data());
 //    }
 
-	// must check here, if it is already running. stop if is running. Tink, see CsoundQT and test....
+	// must check here, if it is already running. stop if is running. Think, see CsoundQT and test....
 	QString message;
     cs->CreateMessageBuffer(0); // also to stdout for debugging
 
@@ -193,6 +178,18 @@ void CsoundEngine::crash()
 	QList <quint8> array;
 	array[10] = 8; // index out of range crash
 }
+
+void CsoundEngine::handleChannelRequest(QString channel)
+{
+	qDebug() << Q_FUNC_INFO << "channel: " << channel;
+	// TYPE??
+	// test for controlChannel
+	double value= getChannel(channel);
+	qDebug() << "value: " << channel;
+	emit newChannelValue(channel, value);
+
+}
+
 
 
 void CsoundEngine::timerSlot()

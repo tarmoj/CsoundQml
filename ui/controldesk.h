@@ -20,11 +20,12 @@ public:
 	virtual void heartBeat();
     virtual void setEngineState(int state);
 	virtual void handleCsoundMessage(QString message);
-	virtual void receiveChannelValue(QString channel, QVariant value);
+	virtual void receiveChannelValue(QString channel, double value);
 
 signals:
 	void newCsoundMessage(QString message);
 	void newEngineState(QString state);
+	void channelValueReceived(QString channel, double value);
 
 public Q_SLOTS:
 	void startEngine();
@@ -35,12 +36,16 @@ public Q_SLOTS:
 	void compileCsd(QString csdText);
 	//void compileCsd(QUrl csdFile);
 	QString getCsdTemplate();
+	void testSlot(QString channel);
+	double getChannelValue(QString channel); // returns from channelValues hash
+
 
 private:
     int engineState;
 	QTimer * checkEngineTimer;
 	QProcess * engineProcess;
 	QElapsedTimer heartBeatTime;
+	QHash <QString, double> channelValues;
 
 };
 

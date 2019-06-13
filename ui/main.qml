@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 
 ApplicationWindow {
     visible: true
@@ -12,18 +13,26 @@ ApplicationWindow {
     signal newControlChannelValue(string channel, double value)
     signal newStringChannelValue(string channel, string value)
     signal crash()
+    signal requestChannelValue(string channel)
 
     Connections {
         target: controlDesk
 
         onNewEngineState: {
-            console.log(state);
+            //console.log(state);
             engineStatusLabel.text = qsTr("Engine: ")+state
         }
 
         onNewCsoundMessage: {
-            console.log(message);
+            //console.log(message);
             editorPage.messageArea.append(message);
+        }
+
+        onChannelValueReceived: {
+            console.log(channel, value)
+            if (channel == "test") {
+                widgetsPage.harmonicsField.text = value
+            }
         }
     }
 
@@ -83,16 +92,22 @@ ApplicationWindow {
             }
 
             Page2Form {
+                id: widgetsPage
+                getChannelButton.onClicked: {
+                    requestChannelValue("test")
+                    //controlDesk.testSlot("test")
+                }
                 slider.onValueChanged: {
                     console.log("freq: ", slider.value)
                     newControlChannelValue("freq", slider.value)
-}
+                }
+
             }
         }
     }
 
     footer:
-        Row {
+        RowLayout {
             id: footerRow
             width: parent.width
 
@@ -104,6 +119,7 @@ ApplicationWindow {
         TabBar {
             id: tabBar
             currentIndex: swipeView.currentIndex
+            Layout.fillWidth:  true
 
             TabButton {
                 text: qsTr("Editor")

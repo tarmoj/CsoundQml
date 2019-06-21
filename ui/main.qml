@@ -26,6 +26,10 @@ ApplicationWindow {
         onNewCsoundMessage: {
             //console.log(message);
             editorPage.messageArea.append(message);
+            // workaround for autoscrioll:
+            if (editorPage.messageArea.height>editorPage.messagesView.contentItem.height)  {
+                editorPage.messagesView.contentItem.contentY =   editorPage.messageArea.height - editorPage.messagesView.contentItem.height
+            }
         }
 
         onChannelValueReceived: {
@@ -51,9 +55,7 @@ ApplicationWindow {
                 id: startButton
                 text: "Play"
                 onClicked: {
-                    //controlDesk.setCsdText(editorPage.csdArea.text)
-                    //controlDesk.start()
-                    //controlDesk.compileCsd(editorPage.csdArea.text);
+                    editorPage.messageArea.text = "" ; //clear
                     play(editorPage.csdArea.text)
                 }
 

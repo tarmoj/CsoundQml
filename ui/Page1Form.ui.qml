@@ -1,11 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4 as QC1
+import QtQuick.Controls.Material 2.1
 
 Page {
     width: 600
     height: 400
+    property alias messagesView: messagesView
     property alias csdArea: csdArea
     property alias messageArea: messageArea
 
@@ -20,35 +21,52 @@ Page {
         spacing: 6
         anchors.margins: 10
 
-        QC1.TextArea {
-            id: csdArea
+        ScrollView {
+            id: csdView
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: parent.height * 0.6
 
-            text: "Csd file"
+            background: Rectangle {
+                color: "#323232" //Material.background //Qt.lighter(Material.background);
+                border.color: "#404040"
+                anchors.fill: parent
+            }
+
+            clip: true
+
+            TextArea {
+                id: csdArea
+                text: "Csd file"
+                anchors.fill: parent
+            }
         }
 
-//        ScrollView {
-//            id: messagesView
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//            Layout.maximumHeight: parent.height * 0.4
+        ScrollView {
+            id: messagesView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: parent.height * 0.4
 
-//            clip: true
-            QC1. TextArea {
+            clip: true
+
+            background: Rectangle {
+                //color: Qt.lighter(Material.background)
+                color: "#373737"
+                border.color: "#404040"
+                anchors.fill: parent
+            }
+
+            TextArea {
                 id: messageArea
                 visible: true
                 readOnly: true
-                //ScrollBar.vertical.position: 1
+                height: parent.height
                 //anchors.fill: parent
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.maximumHeight: parent.height * 0.4
                 font.pointSize: 8
                 font.family: "Courier"
                 text: "Csound messages"
             }
-//        }
+        }
     }
 }

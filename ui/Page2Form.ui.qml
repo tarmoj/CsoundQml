@@ -10,7 +10,7 @@ Page {
     property alias slider: slider
 
     header: Label {
-        text: qsTr("Page 2")
+        text: qsTr("Widgets")
         font.pixelSize: Qt.application.font.pixelSize * 1.5
         padding: 10
     }
@@ -51,6 +51,7 @@ Page {
         }
 
         Button {
+            visible: false
             id: getChannelButton
             text: qsTr("Get")
         }

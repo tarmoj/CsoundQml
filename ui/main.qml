@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Tabs")
+    title: qsTr("CsoundQml -  test")
 
     signal play(string csdText)
     signal stop()

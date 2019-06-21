@@ -49,8 +49,8 @@ void ControlDesk::startEngine()
 {
 	QString path =  QCoreApplication::applicationDirPath();
 	QString executable = path + "/../engine/engine"; //
-	qDebug() << executable;
-	//QString executable = "/home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
+	//qDebug() << executable;
+	//QString executable = "xterm -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
 	engineProcess->start(executable);
 	heartBeatTime.start();
 	connect(engineProcess, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(checkEngineProcess(QProcess::ProcessState))  );
@@ -120,8 +120,11 @@ nchnls = 2
 0dbfs = 1
 
 ;;channels
-chn_k "test",3
+;chn_k "test",3
+;chn_k "freq",3
+;chn_S "testS",3
 
+chnset 12, "test"
 chnset 440, "freq"
 
 alwayson "controller"

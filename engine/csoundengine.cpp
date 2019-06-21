@@ -83,6 +83,28 @@ void CsoundEngine::play(QString csdText) {
 
     cs->Start();
 
+	// TEST check about channels:
+	CSOUND * csound = cs->GetCsound();
+	controlChannelInfo_t *channelList;
+	int numChannels = csoundListChannels(csound, &channelList);
+	qDebug() << "CHANNELS: " << numChannels;
+	controlChannelInfo_t *entry = channelList;
+	double *pvalue;
+	QList <QPair<QString, double>> channelValues; // TODO: to QVariant
+	for (int i = 0; i < numChannels; i++) {
+		int chanType = csoundGetChannelPtr(csound, &pvalue, entry->name,
+										   0);
+		qDebug() << "CHANNELINFO: " << entry->name << entry->type << pvalue;
+
+		if ((chanType & CSOUND_CHANNEL_TYPE_MASK) == CSOUND_CONTROL_CHANNEL) {
+			qDebug() << "Adding control channel" << entry->name;
+			channelValues  << qMakePair(QString(entry->name), 0);
+		}
+		entry++;
+	}
+
+
+
     if (!result ) {
 		isRunning = true;
 		emit newEngineState(PLAYING);
@@ -96,6 +118,17 @@ void CsoundEngine::play(QString csdText) {
 				cs->PopFirstMessage();
 			}
 
+			// check channel values:
+			for (int i=0; i<channelValues.count(); i++) {
+				double value = cs->GetControlChannel(channelValues[i].first.toLocal8Bit());
+				if (value != channelValues[i].second) { // TODO: check if not in the hash of replica already? repr->data()->getValueFromChannelHash() ?? property QHash <QString, QVariant> channelVlaues ?? how to set
+					qDebug() << "Detected new value for: " << channelValues[i].first << " "  << channelValues[i].second;
+					channelValues[i].second = value;
+					emit newChannelValue(channelValues[i].first, value);
+					// TODO: emit signal about new value to source object
+				}
+			}
+
 			QCoreApplication::processEvents(); // probably bad solution but works. otherwise other slots will never be called
 		}
 		qDebug()<<"Stopping csound";
@@ -106,6 +139,7 @@ void CsoundEngine::play(QString csdText) {
 		qDebug()<<"Could not compile csdText";
 	}
 	cs->DestroyMessageBuffer();
+	csoundDeleteChannelList(csound, channelList);
 	delete cs;
 	cs = nullptr;
 	stopNow = false;
@@ -145,7 +179,11 @@ double CsoundEngine::getChannel(QString channel)
 QString CsoundEngine::getStringChannel(QString channel)
 {
     if (cs) {
-        char string[2048]; // to assume the message is not longer...
+		CSOUND * csound = cs->GetCsound();
+		int stringLength = csoundGetChannelDatasize(csound, channel.toLocal8Bit());
+		qDebug()<< "Channel lenght: " << stringLength;
+		//TODO: allocate enough memeory to string, later free it
+		char string[2048]; // to assume the message is not longer...
         cs->GetStringChannel(channel.toLocal8Bit(),string);
         return QString(string);
     } else

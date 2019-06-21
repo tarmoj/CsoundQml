@@ -1,1 +1,28 @@
-/home/tarmo/tarmo/programm/qt-projects/CsoundQml/engine/controldesk.rep
+#include <QtCore>
+
+#define STOPPED 0 // OR: define rather a union
+#define PLAYING 1
+#define PAUSED 2
+#define RENDERING 3
+#define RECORDING 4
+#define RUNNING 5
+#define LOST 6
+
+class ControlDesk
+{
+	//PROP(int uiCommand=0); // PLAY, STOP, PAUSE, RENDER, RECORD
+    SLOT(void setEngineState(int state));
+	SLOT(void heartBeat());
+	SLOT(void handleCsoundMessage(QString message));
+	SLOT(void receiveChannelValue(QString channel, double value)); // QVariant value?
+
+	SIGNAL(compileCsdText(QString text));
+	SIGNAL(stop());
+	SIGNAL(newControlChannelValue(QString channel, double value)); // or maybe one general newChannelValue and QVariant value??
+	SIGNAL(newStringChannelValue(QString channel, QString value));
+	SIGNAL(requestChannelValue(QString channel));
+	SIGNAL(crash());
+
+
+
+};

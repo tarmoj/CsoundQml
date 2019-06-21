@@ -23,9 +23,9 @@ HEADERS += \
 RESOURCES += qml.qrc
 
 DISTFILES += \
-    controldesk.rep
+	controldesk.rep
 
-REPC_SOURCE = controldesk.rep
+REPC_SOURCE = controldesk.rep # TODO: find out how to have one rep file, not two
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

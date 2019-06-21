@@ -25,7 +25,7 @@ HEADERS += \
     csoundengine.h \
 
 DISTFILES += \
-    controldesk.rep
+	controldesk.rep
 
 REPC_REPLICA = controldesk.rep
 

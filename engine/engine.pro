@@ -30,14 +30,12 @@ DISTFILES += \
 REPC_REPLICA = controldesk.rep
 
 linux|android: INCLUDEPATH += /usr/local/include/csound
-win32: INCLUDEPATH += "C:/Program Files/Csound6_x64/include/csound"#"$$(PROGRAMFILES)/Csound6/include/csound"
+win32: INCLUDEPATH += "C:/Program Files/Csound6_x64/include/csound"
 mac: INCLUDEPATH += /Library/Frameworks/CsoundLib64.framework/Headers
 
 
-win32: LIBS += -L"$$PWD/winlibs" #"C:/Program Files/Csound6_x64/bin"- has a spae int it that is problem for linker put csound64.lib there
-linux:!android: LIBS += -lcsound64
-win32-msvc: LIBS += csound64.lib
-linux:!android: LIBS += -ljack
+win32-msvc: LIBS += -L"C:/Program Files/Csound6_x64/bin csound64.lib"
+linux:!android: -lcsound64
 
 mac: {
 LIBS += -F/Library/Frameworks/ -framework CsoundLib64
@@ -51,3 +49,11 @@ android {
   HEADERS += AndroidCsound.hpp
   LIBS +=  -L/home/tarmo/src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/ -lcsoundandroid -lsndfile -lc++_shared -loboe
 }
+
+#---- install rules
+linux:!android: {
+INSTALL_PATH= $$PWD/../bin
+target.path += $$INSTALL_PATH
+INSTALLS += target
+}
+

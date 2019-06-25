@@ -57,3 +57,32 @@ target.path += $$INSTALL_PATH
 INSTALLS += target
 }
 
+macx {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD # deployment
+
+	#second.path = $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/Frameworks
+	#second.files = /Library/Frameworks/CsoundLib64.framework
+	#second.commands = rm -rf $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/Frameworks/CsoundLib64.framework/
+	#TODO: remove Resources Java, Luajit, Manual, Opcodes64 enamus...  PD, Python, samples
+	# remove lbCsoundAc, võibolla libcsnd6
+
+	third.path = $$PWD
+	third.commands = install_name_tool -change @rpath/CsoundLib64.framework/Versions/6.0/CsoundLib64 CsoundLib64.framework/Versions/6.0/CsoundLib64  $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+
+	final.path = $$PWD
+	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util
+
+
+	INSTALLS += first third  #final
+
+}
+
+win32 {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/windeployqt  $$OUT_PWD/$$DESTDIR/$${TARGET}.exe # first deployment
+	INSTALLS += first
+}
+
+
+

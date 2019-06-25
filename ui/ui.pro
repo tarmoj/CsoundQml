@@ -43,4 +43,21 @@ INSTALLS += target
 
 #NB! uuri, kas unix:documentation.extra = create_docs; mv master.doc toc.doc extra -  oleks kasulik!
 
+macx {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD # deployment
+
+	final.path = $$PWD
+	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util
+
+
+	INSTALLS += first  #final
+
+}
+
+win32 {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/windeployqt  -qmldir=$$PWD  $$OUT_PWD/$$DESTDIR/$${TARGET}.exe # first deployment
+	INSTALLS += first
+}
 

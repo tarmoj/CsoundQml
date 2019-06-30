@@ -50,6 +50,7 @@ macx {
 	final.path = $$PWD
 	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util
 
+	#TODO: check the dependcies of engine, set name_path of engine binariy (use Csound64 from system)
 
 	INSTALLS += first  #final
 

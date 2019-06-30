@@ -35,7 +35,7 @@ mac: INCLUDEPATH += /Library/Frameworks/CsoundLib64.framework/Headers
 
 
 win32-msvc: LIBS += -L"C:/Program Files/Csound6_x64/bin csound64.lib"
-linux:!android: -lcsound64
+linux:!android: LIBS += -lcsound64
 
 mac: {
 LIBS += -F/Library/Frameworks/ -framework CsoundLib64
@@ -49,6 +49,14 @@ android {
   HEADERS += AndroidCsound.hpp
   LIBS +=  -L/home/tarmo/src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/ -lcsoundandroid -lsndfile -lc++_shared -loboe
 }
+
+linux:!android:: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui) # to put the binaries in the same folder
+#mac reuire
+
+macx: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET.app/Contents/MacOS/$$TARGET $$OUT_PWD/../ui.app/Contents/MacOS)
+
+win32: QMAKE_POST_LINK += $$quote(cmd /c copy /y $$OUT_PWD/$$TARGET $$OUT_PWD/../ui)
+
 
 #---- install rules
 linux:!android: {
@@ -68,7 +76,7 @@ macx {
 	# remove lbCsoundAc, võibolla libcsnd6
 
 	third.path = $$PWD
-	third.commands = install_name_tool -change @rpath/CsoundLib64.framework/Versions/6.0/CsoundLib64 CsoundLib64.framework/Versions/6.0/CsoundLib64  $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+	third.commands = install_name_tool -change @rpath/CsoundLib64.framework/Versions/6.0/CsoundLib64 CsoundLib64.framework/Versions/6.0/CsoundLib64  $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine # if engine is copied -  this makes no sense??
 
 	final.path = $$PWD
 	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util

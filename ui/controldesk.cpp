@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include "controldesk.h"
+#include <QFileDialog>
 
 ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
 	engineState(LOST),

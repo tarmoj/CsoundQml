@@ -1,4 +1,4 @@
-QT += quick core remoteobjects
+QT += quick core remoteobjects widgets
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use

@@ -50,6 +50,8 @@ android {
   LIBS +=  -L/home/tarmo/src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/ -lcsoundandroid -lsndfile -lc++_shared -loboe
 }
 
+
+
 linux:!android:: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui) # to put the binaries in the same folder
 #mac reuire
 
@@ -58,5 +60,13 @@ macx: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET.app/Contents/MacOS/$$TARG
 win32: QMAKE_POST_LINK += $$quote(cmd /c copy /y $$OUT_PWD/$$TARGET $$OUT_PWD/../ui)
 
 # install rules by engine since this is built later
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS = \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libc++_shared.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libcsoundandroid.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/liboboe.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libsndfile.so
+}
 
 

@@ -10,6 +10,11 @@ ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
 
 }
 
+ControlDesk::~ControlDesk()
+{
+	stopEngine();
+}
+
 void ControlDesk::heartBeat() // NB! must be called by timer
 {
 	heartBeatTime.restart();
@@ -25,8 +30,8 @@ void ControlDesk::setEngineState(int state)
 		case PAUSED: emit newEngineState(tr("paused")); break;
 		case RENDERING: emit newEngineState(tr("rendering")); break;
 		case RECORDING: emit newEngineState(tr("recording")); break;
-		case RUNNING: emit newEngineState(tr("running")); break;
-		case LOST: emit newEngineState(tr("not running")); break;
+		case RUNNING: emit newEngineState(tr("connected")); break;
+		case LOST: emit newEngineState(tr("disconnected")); break;
 
 	}
 }

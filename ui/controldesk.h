@@ -7,15 +7,13 @@
 
 #include "rep_controldesk_source.h"
 
-#define STOP 0
-#define PLAY 1
-// etc
 
 class ControlDesk : public ControlDeskSimpleSource
 {
     Q_OBJECT
 public:
     explicit ControlDesk(QObject *parent = nullptr);
+	~ControlDesk();
 
 	virtual void heartBeat();
     virtual void setEngineState(int state);

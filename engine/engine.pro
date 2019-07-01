@@ -55,7 +55,7 @@ android {
 linux:!android:: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui) # to put the binaries in the same folder
 #mac reuire
 
-macx: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET.app/Contents/MacOS/$$TARGET $$OUT_PWD/../ui.app/Contents/MacOS)
+macx: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui/ui.app/Contents/MacOS)
 
 win32: QMAKE_POST_LINK += $$quote(cmd /c copy /y $$OUT_PWD/$$TARGET $$OUT_PWD/../ui)
 

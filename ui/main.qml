@@ -95,13 +95,16 @@ ApplicationWindow {
 
             Page2Form {
                 id: widgetsPage
-                getChannelButton.onClicked: {
-                    requestChannelValue("test")
-                    //controlDesk.testSlot("test")
-                }
+
                 slider.onValueChanged: {
                     console.log("freq: ", slider.value)
                     newControlChannelValue("freq", slider.value)
+                }
+
+                refreshButton.onClicked:  {
+                    console.log("refresh Widget view")
+                    var newObject = Qt.createQmlObject( "import QtQuick 2.9;
+import QtQuick.Controls 2.2; import QtQuick.Layouts 1.3; " + widgetsText.text, widgetsArea, "Page2Form" );
                 }
 
             }

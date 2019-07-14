@@ -5,8 +5,10 @@ Page {
     id: page
     width: 600
     height: 400
+    property alias widgetsArea: widgetsArea
+    property alias widgetsText: widgetsText
+    property alias refreshButton: refreshButton
     property alias harmonicsField: harmonicsField
-    property alias getChannelButton: getChannelButton
     property alias slider: slider
 
     header: Label {
@@ -15,45 +17,93 @@ Page {
         padding: 10
     }
 
-    Row {
-        id: row
+    Column {
+        id: widgetsArea
         y: 6
-        spacing: 4
+        spacing: 6
+
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.left: parent.left
         anchors.leftMargin: 6
 
-        Label {
-            id: label
-            text: qsTr("Freq:")
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
+        Row {
+            id: row
+            spacing: 4
 
-        Slider {
-            id: slider
-            to: 1000
-            from: 100
-            value: 440
-        }
+            Label {
+                id: label
+                text: qsTr("Freq:")
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
 
-        Label {
-            id: label1
-            text: qsTr("Harmonics:")
-        }
+            Slider {
+                id: slider
+                to: 1000
+                from: 100
+                value: 440
+            }
 
-        TextField {
-            id: harmonicsField
-            width: 40
-            text: qsTr("?")
-            horizontalAlignment: Text.AlignRight
+            Label {
+                id: label1
+                text: qsTr("Harmonics:")
+            }
+
+            TextField {
+                id: harmonicsField
+                width: 40
+                text: qsTr("?")
+                horizontalAlignment: Text.AlignRight
+            }
+        }
+    }
+
+    ScrollView {
+        id: scrollView
+        x: 248
+        y: 104
+        width: widgetsArea.width
+        height: 200
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+
+            top: widgetsArea.bottom
+            topMargin: 6
+            bottom: controlsRow.top
+            bottomMargin: 6
+        }
+        clip: true
+
+        TextArea {
+            id: widgetsText
+            anchors.fill: parent
+            text: '
+Slider {
+id: volume
+to: 1
+from: 0
+value: 0.8
+}
+
+
+'
+        }
+    }
+
+    Row {
+        id: controlsRow
+        width: widgetsArea.width
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 6
+        spacing: 4
+        anchors {
+            horizontalCenter: parent.horizontalCenter
         }
 
         Button {
-            visible: false
-            id: getChannelButton
-            text: qsTr("Get")
+            id: refreshButton
+            text: qsTr("Refresh")
         }
     }
 }

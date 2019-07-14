@@ -1,4 +1,8 @@
-QT -= gui
+android {
+	QT += gui
+}  else {
+	QT -= gui # gui is there by default, necessary for android
+}
 QT += core remoteobjects
 
 CONFIG += c++11 console

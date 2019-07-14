@@ -48,12 +48,18 @@ macx {
 	first.path = $$PWD/../bin
 	first.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD # deployment
 
+        second.path = $$PWD/../bin
+        second.commands = install_name_tool -add_rpath "@executable_path/../Frameworks/"  $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+
+        third.path = $$PWD/../bin
+        third.commands = install_name_tool -change  @rpath/CsoundLib64.framework/Versions/6.0/CsoundLib64 CsoundLib64.framework/Versions/6.0/CsoundLib64 $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+
 	final.path = $$PWD
 	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util
 
 	#TODO: check the dependcies of engine, set name_path of engine binariy (use Csound64 from system)
 
-	INSTALLS += first  #final
+        INSTALLS += first second third #final
 
 }
 

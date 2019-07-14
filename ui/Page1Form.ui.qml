@@ -38,7 +38,7 @@ Page {
             TextArea {
                 id: csdArea
                 text: "Csd file"
-                anchors.fill: parent
+                selectByMouse: true
             }
         }
 
@@ -62,6 +62,7 @@ Page {
                 visible: true
                 readOnly: true
                 height: parent.height
+                selectByMouse: true
                 //anchors.fill: parent
                 font.pointSize: 8
                 font.family: "Courier"

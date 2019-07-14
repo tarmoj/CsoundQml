@@ -30,14 +30,12 @@ DISTFILES += \
 REPC_REPLICA = controldesk.rep
 
 linux|android: INCLUDEPATH += /usr/local/include/csound
-win32: INCLUDEPATH += "C:/Program Files/Csound6_x64/include/csound"#"$$(PROGRAMFILES)/Csound6/include/csound"
+win32: INCLUDEPATH += "C:/Program Files/Csound6_x64/include/csound"
 mac: INCLUDEPATH += /Library/Frameworks/CsoundLib64.framework/Headers
 
 
-win32: LIBS += -L"$$PWD/winlibs" #"C:/Program Files/Csound6_x64/bin"- has a spae int it that is problem for linker put csound64.lib there
+win32-msvc: LIBS += -L"C:/Program Files/Csound6_x64/bin csound64.lib"
 linux:!android: LIBS += -lcsound64
-win32-msvc: LIBS += csound64.lib
-linux:!android: LIBS += -ljack
 
 mac: {
 LIBS += -F/Library/Frameworks/ -framework CsoundLib64
@@ -51,3 +49,24 @@ android {
   HEADERS += AndroidCsound.hpp
   LIBS +=  -L/home/tarmo/src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/ -lcsoundandroid -lsndfile -lc++_shared -loboe
 }
+
+
+
+linux:!android:: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui) # to put the binaries in the same folder
+#mac reuire
+
+macx: QMAKE_POST_LINK += $$quote(cp $$OUT_PWD/$$TARGET $$OUT_PWD/../ui/ui.app/Contents/MacOS)
+
+win32: QMAKE_POST_LINK += $$quote(cmd /c copy /y $$OUT_PWD/$$TARGET $$OUT_PWD/../ui)
+
+# install rules by engine since this is built later
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS = \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libc++_shared.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libcsoundandroid.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/liboboe.so \
+        $$PWD/../../../../../src/csound-android-6.12.0/CsoundForAndroid/CsoundAndroid/src/main/jniLibs/armeabi-v7a/libsndfile.so
+}
+
+

@@ -1,4 +1,5 @@
-QT += quick core remoteobjects
+QT += quick core remoteobjects widgets
+android: QT += androidextras
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -33,9 +34,38 @@ QML_IMPORT_PATH =
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+# INSTALL RULES -----
 
+linux:!android: {
+INSTALL_PATH= $$PWD/../bin
+target.path += $$INSTALL_PATH
+INSTALLS += target
+}
+
+#NB! uuri, kas unix:documentation.extra = create_docs; mv master.doc toc.doc extra -  oleks kasulik!
+
+macx {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD # deployment
+
+        second.path = $$PWD/../bin
+        second.commands = install_name_tool -add_rpath "@executable_path/../Frameworks/"  $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+
+        third.path = $$PWD/../bin
+        third.commands = install_name_tool -change  @rpath/CsoundLib64.framework/Versions/6.0/CsoundLib64 CsoundLib64.framework/Versions/6.0/CsoundLib64 $$OUT_PWD/$$DESTDIR/$${TARGET}.app/Contents/MacOS/engine
+
+	final.path = $$PWD
+	final.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg# deployment BETTER: use hdi-util
+
+	#TODO: check the dependcies of engine, set name_path of engine binariy (use Csound64 from system)
+
+        INSTALLS += first second third #final
+
+}
+
+win32 {
+	first.path = $$PWD/../bin
+	first.commands = $$[QT_INSTALL_PREFIX]/bin/windeployqt  -qmldir=$$PWD  $$OUT_PWD/$$DESTDIR/$${TARGET}.exe # first deployment
+	INSTALLS += first
+}
 

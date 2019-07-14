@@ -1,5 +1,9 @@
  TEMPLATE = subdirs
 
+CONFIG += ordered
+
 SUBDIRS += \
-    engine \
-    ui
+	ui\
+	engine
+
+

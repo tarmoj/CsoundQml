@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include "controldesk.h"
+#include <QFileDialog>
 
 ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
 	engineState(LOST),
@@ -7,6 +8,11 @@ ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
 {
 	startEngine();
 
+}
+
+ControlDesk::~ControlDesk()
+{
+	stopEngine();
 }
 
 void ControlDesk::heartBeat() // NB! must be called by timer
@@ -24,8 +30,8 @@ void ControlDesk::setEngineState(int state)
 		case PAUSED: emit newEngineState(tr("paused")); break;
 		case RENDERING: emit newEngineState(tr("rendering")); break;
 		case RECORDING: emit newEngineState(tr("recording")); break;
-		case RUNNING: emit newEngineState(tr("running")); break;
-		case LOST: emit newEngineState(tr("not running")); break;
+		case RUNNING: emit newEngineState(tr("connected")); break;
+		case LOST: emit newEngineState(tr("disconnected")); break;
 
 	}
 }
@@ -48,8 +54,8 @@ void ControlDesk::receiveChannelValue(QString channel, double value) // QVariant
 void ControlDesk::startEngine()
 {
 	QString path =  QCoreApplication::applicationDirPath();
-	QString executable = path + "/../engine/engine"; //
-	//qDebug() << executable;
+	QString executable = path + "/engine"; // NB! use make install to put them into same directory!  //  "/../engine/engine"; //
+	qDebug() << executable;
 	//QString executable = "xterm -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
 	engineProcess->start(executable);
 	heartBeatTime.start();

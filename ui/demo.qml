@@ -17,7 +17,7 @@ Item {
 
     Row {
         id: row
-        spacing: 4
+        spacing: 8
 
         Label {
             id: label
@@ -51,16 +51,18 @@ Item {
         Rectangle {
             width: 40; height: width
             //radius: width/2
-            color: "yellow"
+            color: "#957500"
+            border.color: "#fb0606"
 
             SequentialAnimation on radius {
                 running: true
                 loops: Animation.Infinite
-                PropertyAnimation { to: width/2; duration: 500 }
-                PropertyAnimation { to: 0; duration: 500 }
-
-
+                PropertyAnimation { to: 20; duration: 1000 }
+                PropertyAnimation { to: 0; duration: 1000 }
             }
+
+            onRadiusChanged: csound.setControlChannel("volume", radius/20)
+
         }
 
     }

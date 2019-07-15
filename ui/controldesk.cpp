@@ -125,27 +125,22 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-;;channels
-;chn_k "test",3
-;chn_k "freq",3
-;chn_S "testS",3
-
-chnset 12, "test"
 chnset 440, "freq"
 
 
 alwayson "controller"
 instr controller
     ktrig metro 0.5 // NB! 1/2 returns 0 on first run!!!
-	schedkwhen ktrig, 0, 0, "sound", 0, 0.5
+    schedkwhen ktrig, 0, 0, "sound", 0, 0.9
 endin
 
 instr sound
 	ifreq chnget "freq"
 	iharm = int(random:i( 1, 15) )
 	chnset iharm, "test"
-	asig buzz 0.2*adsr:a(0.1,0.1, 0.5, p3/2), ifreq, iharm, -1
-	outs asig, asig
+    asig buzz adsr:a(0.1,0.1, 0.5, p3/2), ifreq, iharm, -1
+    asig *= chnget:k("volume")
+    outs asig, asig
 endin
 
 </CsInstruments>

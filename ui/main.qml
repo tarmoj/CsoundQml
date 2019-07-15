@@ -34,12 +34,7 @@ ApplicationWindow {
             }
         }
 
-        onChannelValueReceived: {
-            console.log(channel, value)
-            if (channel == "test") {
-                widgetsPage.harmonicsField.text = value
-            }
-        }
+        // TODO: a more universal way to handle received values local hash or access the hash in controlDesk
     }
 
     Settings {

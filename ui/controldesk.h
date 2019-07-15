@@ -37,6 +37,8 @@ public Q_SLOTS:
 	void testSlot(QString channel);
 	double getChannelValue(QString channel); // returns from channelValues hash
 
+    void setControlChannel(QString channel, double value) { emit  newControlChannelValue(channel, value); }
+
 
 private:
     int engineState;

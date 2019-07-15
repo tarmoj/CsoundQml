@@ -59,6 +59,14 @@ ApplicationWindow {
         var request = new XMLHttpRequest();
         request.open("PUT", fileUrl, false);
         request.send(text);
+        request.onload = function () { console.log ("LOADED!"); }
+        request.onreadystatechange = function () {
+            console.log(request.readyState, request.status, request.statusText)
+            if (request.readyState === 200 ) {
+                console.log("Done")
+            }
+        }
+
         return request.status;
     }
 
@@ -159,16 +167,32 @@ ApplicationWindow {
 
             Page2Form {
                 id: widgetsPage
+                property string tempQmlFile: StandardPaths.writableLocation(StandardPaths.TempLocation) + "/tmp.qml"
+
+                Component.onCompleted: widgetsText.text = openFile("qrc:/demo.qml")
 
                 slider.onValueChanged: {
                     console.log("freq: ", slider.value)
                     newControlChannelValue("freq", slider.value)
                 }
 
+                Timer { // necessary to set the source  a bit later. Bad code.
+                    id: setWidgetsTimer
+                    running: false
+                    repeat: false
+                    interval: 100
+
+                    onTriggered: widgetsPage.widgetsArea.source = widgetsPage.tempQmlFile  + "?t=" + Date.now() // force to update
+                }
+
                 refreshButton.onClicked:  {
                     console.log("refresh Widget view")
-                    var newObject = Qt.createComponent()( "import QtQuick 2.9;
-import QtQuick.Controls 2.2; import QtQuick.Layouts 1.3; " + widgetsText.text, widgetsArea, "Page2Form" );
+                    saveFile(widgetsPage.tempQmlFile, widgetsText.text)
+                    // TODO: catch some kind of signal when save is fihishe
+                    console.log(widgetsPage.tempQmlFile)
+                    setWidgetsTimer.start() // give some time for save to finish
+
+                    //widgetsArea.source = tempQmlFile;  //+ "?t=" + Date.now() // to avoid from loading from QML cache if you need to reload the file
                 }
 
             }

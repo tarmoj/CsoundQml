@@ -5,10 +5,10 @@ Item {
     anchors.fill: parent
 
     Connections {
-        target: controlDesk
+        target: csound
 
         onChannelValueReceived: {
-            console.log(channel, value)
+            //console.log(channel, value)
             if (channel == "test") {
                 harmonicsField.text = value
             }
@@ -33,7 +33,7 @@ Item {
             to: 1000
             from: 100
             value: 440
-            onValueChanged: controlDesk.setControlChannel("freq", value)
+            onValueChanged: csound.setControlChannel("freq", value)
 
         }
 

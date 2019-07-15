@@ -36,20 +36,20 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     ControlDesk controlDesk;
-    engine.rootContext()->setContextProperty("controlDesk", &controlDesk);
+    engine.rootContext()->setContextProperty("csound", &controlDesk); // to make usage more familiar and similar to usual Csound API
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 	if (engine.rootObjects().isEmpty()) {
         return -1;
 	}
 
-	// connect QML signals to source objects signals
-	QObject *ui = engine.rootObjects().first();
-	QObject::connect(ui, SIGNAL(play(QString)), &controlDesk, SIGNAL(compileCsdText(QString))  ); // TODO change singal to play(), too
-	QObject::connect(ui, SIGNAL(stop()), &controlDesk, SIGNAL(stop())  );
-	QObject::connect(ui, SIGNAL(newControlChannelValue(QString, double) ), &controlDesk, SIGNAL(newControlChannelValue(QString, double))  );
-	QObject::connect(ui, SIGNAL(newStringChannelValue(QString, QString) ), &controlDesk, SIGNAL(newStringChannelValue(QString, QString))  );
-	QObject::connect(ui, SIGNAL(crash()), &controlDesk, SIGNAL(crash())  );
-	QObject::connect(ui, SIGNAL(requestChannelValue(QString)), &controlDesk, SIGNAL(requestChannelValue(QString))  );
+//	// connect QML signals to source objects signals
+//	QObject *ui = engine.rootObjects().first();
+//	QObject::connect(ui, SIGNAL(play(QString)), &controlDesk, SIGNAL(compileCsdText(QString))  ); // TODO change singal to play(), too
+//	QObject::connect(ui, SIGNAL(stop()), &controlDesk, SIGNAL(stop())  );
+//	QObject::connect(ui, SIGNAL(newControlChannelValue(QString, double) ), &controlDesk, SIGNAL(newControlChannelValue(QString, double))  );
+//	QObject::connect(ui, SIGNAL(newStringChannelValue(QString, QString) ), &controlDesk, SIGNAL(newStringChannelValue(QString, QString))  );
+//	QObject::connect(ui, SIGNAL(crash()), &controlDesk, SIGNAL(crash())  );
+//	QObject::connect(ui, SIGNAL(requestChannelValue(QString)), &controlDesk, SIGNAL(requestChannelValue(QString))  );
 
 	// set source node
 	 QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:controlDesk")));

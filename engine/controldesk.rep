@@ -17,11 +17,11 @@ class ControlDesk
 	SLOT(void receiveChannelValue(QString channel, double value)); // QVariant value?
 
 	SIGNAL(compileCsdText(QString text));
-	SIGNAL(stop());
+    SIGNAL(stopCsound());
 	SIGNAL(newControlChannelValue(QString channel, double value)); // or maybe one general newChannelValue and QVariant value??
 	SIGNAL(newStringChannelValue(QString channel, QString value));
-	SIGNAL(requestChannelValue(QString channel));
-	SIGNAL(crash());
+    SIGNAL(requestChannel(QString channel));
+    SIGNAL(crashCsound());
 
 
 

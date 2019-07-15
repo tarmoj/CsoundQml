@@ -38,10 +38,10 @@ void CsoundEngine::initConnections()
 
 	connect(reptr.data(), SIGNAL(compileCsdText(QString)), this, SLOT(play(QString)));
 
-	connect(reptr.data(), SIGNAL(stop()), this, SLOT(stop()) );
+    connect(reptr.data(), SIGNAL(stopCsound()), this, SLOT(stop()) );
 	connect(reptr.data(), SIGNAL(newControlChannelValue(QString, double) ), this, SLOT(setChannel(QString, double))  );
-	connect(reptr.data(), SIGNAL(crash()), this, SLOT(crash()) );
-	connect(reptr.data(), SIGNAL(requestChannelValue(QString)), this, SLOT(handleChannelRequest(QString) ) );
+    connect(reptr.data(), SIGNAL(crashCsound()), this, SLOT(crash()) );
+    connect(reptr.data(), SIGNAL(requestChannel(QString)), this, SLOT(handleChannelRequest(QString) ) );
 
 
 

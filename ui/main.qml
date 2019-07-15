@@ -10,15 +10,9 @@ ApplicationWindow {
     height: 480
     title: qsTr("CsoundQml -  test")
 
-    signal play(string csdText)
-    signal stop()
-    signal newControlChannelValue(string channel, double value)
-    signal newStringChannelValue(string channel, string value)
-    signal crash()
-    signal requestChannelValue(string channel)
 
     Connections {
-        target: controlDesk
+        target: csound
 
         onNewEngineState: {
             //console.log(state);
@@ -33,8 +27,6 @@ ApplicationWindow {
                 editorPage.messagesView.contentItem.contentY =   editorPage.messageArea.height - editorPage.messagesView.contentItem.height
             }
         }
-
-        // TODO: a more universal way to handle received values local hash or access the hash in controlDesk
     }
 
     Settings {
@@ -95,7 +87,7 @@ ApplicationWindow {
 
 
 
-    Component.onCompleted: editorPage.csdArea.text = controlDesk.getCsdTemplate()
+    Component.onCompleted: editorPage.csdArea.text = csound.getCsdTemplate()
 
     Item {
 
@@ -110,14 +102,14 @@ ApplicationWindow {
                 text: "Play"
                 onClicked: {
                     editorPage.messageArea.text = "" ; //clear
-                    play(editorPage.csdArea.text)
+                    csound.play(editorPage.csdArea.text)
                 }
 
             }
             Button {
                 id: stopButton
                 text: "Stop"
-                onClicked: stop() //controlDesk.stop_()
+                onClicked: csound.stop()
             }
 
             Button {
@@ -136,14 +128,14 @@ ApplicationWindow {
             Button {
                 id: engineButton
                 text: qsTr("Restart engine")
-                onClicked: controlDesk.restartEngine()
+                onClicked: csound.restartEngine()
 
             }
 
             Button {
                 id: crashButton
                 text: qsTr("Crash engine")
-                onClicked: crash()
+                onClicked: csound.crash()
 
             }
 
@@ -166,12 +158,8 @@ ApplicationWindow {
 
                 Component.onCompleted: widgetsText.text = openFile("qrc:/demo.qml")
 
-                slider.onValueChanged: {
-                    console.log("freq: ", slider.value)
-                    newControlChannelValue("freq", slider.value)
-                }
 
-                Timer { // necessary to set the source  a bit later. Bad code.
+                Timer { // necessary to set the source  a bit later. Bad code. Use some signal/event on save XML request
                     id: setWidgetsTimer
                     running: false
                     repeat: false
@@ -183,13 +171,9 @@ ApplicationWindow {
                 refreshButton.onClicked:  {
                     console.log("refresh Widget view")
                     saveFile(widgetsPage.tempQmlFile, widgetsText.text)
-                    // TODO: catch some kind of signal when save is fihishe
-                    console.log(widgetsPage.tempQmlFile)
+                    // TODO: catch some kind of signal when save is fihished. For now:
                     setWidgetsTimer.start() // give some time for save to finish
-
-                    //widgetsArea.source = tempQmlFile;  //+ "?t=" + Date.now() // to avoid from loading from QML cache if you need to reload the file
                 }
-
             }
         }
     }

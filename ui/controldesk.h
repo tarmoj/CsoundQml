@@ -37,7 +37,16 @@ public Q_SLOTS:
 	void testSlot(QString channel);
 	double getChannelValue(QString channel); // returns from channelValues hash
 
+
+    // wrapper methods that can be called from qml/html object that send signal to engine
+
+    void play(QString csdText) { emit compileCsdText(csdText); }
+    void stop() { emit stopCsound(); }
     void setControlChannel(QString channel, double value) { emit  newControlChannelValue(channel, value); }
+    void setStringChannel(QString channel, QString value) { emit  newStringChannelValue(channel, value); }
+    void requestChannelValue(QString channel) { emit requestChannel(channel); } // TODO: consistent naming conventions
+    // for testing only
+    void crash() {  emit crashCsound(); }
 
 
 private:

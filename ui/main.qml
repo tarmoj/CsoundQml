@@ -21,11 +21,7 @@ ApplicationWindow {
 
         onNewCsoundMessage: {
             //console.log(message);
-            editorPage.messageArea.append(message);
-            // workaround for autoscrioll:
-            if (editorPage.messageArea.height>editorPage.messagesView.contentItem.height)  {
-                editorPage.messagesView.contentItem.contentY =   editorPage.messageArea.height - editorPage.messagesView.contentItem.height
-            }
+            editorPage.messageArea.textArea.append(message) // this works! no workaround any more!
         }
     }
 

@@ -5,5 +5,6 @@
         <file>Page2Form.ui.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>demo.qml</file>
+        <file>ScrollableTextArea.qml</file>
     </qresource>
 </RCC>

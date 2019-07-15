@@ -8,7 +8,6 @@ Item {
         target: csound
 
         onChannelValueReceived: {
-            //console.log(channel, value)
             if (channel == "test") {
                 harmonicsField.text = value
             }
@@ -45,8 +44,23 @@ Item {
         TextField {
             id: harmonicsField
             width: 40
-            text: "?"// this must be solved
+            text: "?"
             horizontalAlignment: Text.AlignRight
+        }
+
+        Rectangle {
+            width: 40; height: width
+            //radius: width/2
+            color: "yellow"
+
+            SequentialAnimation on radius {
+                running: true
+                loops: Animation.Infinite
+                PropertyAnimation { to: width/2; duration: 500 }
+                PropertyAnimation { to: 0; duration: 500 }
+
+
+            }
         }
 
     }

@@ -6,7 +6,6 @@ import QtQuick.Controls.Material 2.1
 Page {
     width: 600
     height: 400
-    property alias messagesView: messagesView
     property alias csdArea: csdArea
     property alias messageArea: messageArea
 
@@ -21,53 +20,23 @@ Page {
         spacing: 6
         anchors.margins: 10
 
-        ScrollView {
-            id: csdView
+        ScrollableTextArea {
+            id: csdArea
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: parent.height * 0.6
-
-            background: Rectangle {
-                color: "#323232" //Material.background //Qt.lighter(Material.background);
-                border.color: "#404040"
-                anchors.fill: parent
-            }
-
-            clip: true
-
-            TextArea {
-                id: csdArea
-                text: "Csd file"
-                selectByMouse: true
-            }
         }
 
-        ScrollView {
-            id: messagesView
+        ScrollableTextArea {
+            id: messageArea
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: parent.height * 0.4
-
-            clip: true
-
-            background: Rectangle {
-                //color: Qt.lighter(Material.background)
-                color: "#373737"
-                border.color: "#404040"
-                anchors.fill: parent
-            }
-
-            TextArea {
-                id: messageArea
-                visible: true
-                readOnly: true
-                height: parent.height
-                selectByMouse: true
-                //anchors.fill: parent
-                font.pointSize: 8
-                font.family: "Courier"
-                text: "Csound messages"
-            }
+            textArea.readOnly: true
+            textArea.height: parent.height // ? must be delvared for autoscroll?
+            textArea.font.pointSize: 8
+            textArea.font.family: "Courier"
+            text: "Csound messages"
         }
     }
 }

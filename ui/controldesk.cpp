@@ -133,9 +133,10 @@ nchnls = 2
 chnset 12, "test"
 chnset 440, "freq"
 
+
 alwayson "controller"
 instr controller
-	ktrig metro 1/2
+    ktrig metro 0.5 // NB! 1/2 returns 0 on first run!!!
 	schedkwhen ktrig, 0, 0, "sound", 0, 0.5
 endin
 

@@ -17,8 +17,23 @@ Page {
         padding: 10
     }
 
-    Column {
+    Loader {
         id: widgetsArea
+        y: 6
+        height: parent.height * 0.4
+        anchors {
+            right: parent.right
+            rightMargin: 6
+            left: parent.left
+            leftMargin: 6
+        }
+        source: "qrc:/demo.qml"
+    }
+
+    
+    Column { // later get rid of it... keep it for testing's sake (similar to old)
+        visible: false
+        id: widgetsArea_old
         y: 6
         spacing: 6
 
@@ -26,6 +41,7 @@ Page {
         anchors.rightMargin: 8
         anchors.left: parent.left
         anchors.leftMargin: 6
+
 
         Row {
             id: row
@@ -59,6 +75,7 @@ Page {
         }
     }
 
+    
     ScrollView {
         id: scrollView
         x: 248

@@ -1,6 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Qt.labs.platform 1.0
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
     visible: true
@@ -40,6 +42,55 @@ ApplicationWindow {
         }
     }
 
+    Settings {
+        property alias lastCsdFile: openFileDialog.file
+        property alias lastOpenFolder: openFileDialog.folder
+        property alias lastSaveFolder: saveFileDialog.folder
+    }
+
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false);
+        request.send(null);
+        return request.responseText;
+    }
+
+    function saveFile(fileUrl, text) {
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    function getBasename(url) {
+        var basename = url.toString()
+        basename = basename.slice(0, basename.lastIndexOf("/")+1)
+        return basename
+    }
+
+    FileDialog {
+        id: openFileDialog
+        nameFilters: ["Csd files (*.csd)", "All files (*)"]
+        //folder: lastFolder
+        onAccepted: {
+            folder = getBasename(file)
+            saveFileDialog.currentFile = file // does not work
+            editorPage.csdArea.text = openFile(openFileDialog.file)
+        }
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        //currentFile:  "autotune.csd"
+        fileMode: FileDialog.SaveFile
+        nameFilters: ["Csd files (*.csd)", "All files (*)"]
+        onAccepted: {
+            folder = getBasename(file)
+            saveFile(saveFileDialog.file, editorPage.csdArea.text)
+        }
+    }
+
+
 
     Component.onCompleted: editorPage.csdArea.text = controlDesk.getCsdTemplate()
 
@@ -65,6 +116,19 @@ ApplicationWindow {
                 text: "Stop"
                 onClicked: stop() //controlDesk.stop_()
             }
+
+            Button {
+                id: openButton
+                text: "Open"
+                onClicked: openFileDialog.open()
+            }
+
+            Button {
+                id: saveButton
+                text: "Save"
+                onClicked: saveFileDialog.open()
+            }
+
 
             Button {
                 id: engineButton
@@ -103,7 +167,7 @@ ApplicationWindow {
 
                 refreshButton.onClicked:  {
                     console.log("refresh Widget view")
-                    var newObject = Qt.createQmlObject( "import QtQuick 2.9;
+                    var newObject = Qt.createComponent()( "import QtQuick 2.9;
 import QtQuick.Controls 2.2; import QtQuick.Layouts 1.3; " + widgetsText.text, widgetsArea, "Page2Form" );
                 }
 

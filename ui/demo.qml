@@ -48,23 +48,6 @@ Item {
             horizontalAlignment: Text.AlignRight
         }
 
-        Rectangle {
-            width: 40; height: width
-            //radius: width/2
-            color: "#957500"
-            border.color: "#fb0606"
-
-            SequentialAnimation on radius {
-                running: true
-                loops: Animation.Infinite
-                PropertyAnimation { to: 20; duration: 1000 }
-                PropertyAnimation { to: 0; duration: 1000 }
-            }
-
-            onRadiusChanged: csound.setControlChannel("volume", radius/20)
-
-        }
-
     }
 
 }

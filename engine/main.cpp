@@ -9,7 +9,9 @@ int main(int argc, char *argv[])
     // prepare replica
     QSharedPointer<ControlDeskReplica> ptr; // shared pointer to hold source replica
     QRemoteObjectNode repNode; // create remote object node
+
     repNode.connectToNode(QUrl(QStringLiteral("local:controlDesk"))); // tcp://192.168.1.130// connect with remote host node
+
     ptr.reset(repNode.acquire<ControlDeskReplica>()); // acquire replica of source from host node
 
     // create Csound and put it into a thread

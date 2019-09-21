@@ -29,9 +29,6 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_ANDROID
 	checkPermission();
-//	QString pluginsPath = QApplication::applicationDirPath() + "/lib/";
-//	qDebug()<<" Csound plugins in: " << pluginsPath;
-//	setenv("OPCODE6DIR64", pluginsPath.toLocal8Bit() ,1);
 #endif
 
     QQmlApplicationEngine engine;
@@ -52,7 +49,7 @@ int main(int argc, char *argv[])
 //	QObject::connect(ui, SIGNAL(requestChannelValue(QString)), &controlDesk, SIGNAL(requestChannelValue(QString))  );
 
 	// set source node
-	 QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:controlDesk")));
+	 QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:controlDesk"))); //  // tcp://192.168.1.130
      srcNode.enableRemoting(&controlDesk); // enable remoting/sharing
 
     return app.exec();

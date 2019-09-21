@@ -171,6 +171,10 @@ ApplicationWindow {
                     setWidgetsTimer.start() // give some time for save to finish
                 }
             }
+
+            Page {
+                Label {text: "Not implemented yet"}
+            }
         }
     }
 
@@ -194,6 +198,10 @@ ApplicationWindow {
             }
             TabButton {
                 text: qsTr("Widgets")
+            }
+
+            TabButton {
+                text: qsTr("HTML")
             }
 
         }

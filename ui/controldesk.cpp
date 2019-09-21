@@ -54,7 +54,7 @@ void ControlDesk::receiveChannelValue(QString channel, double value) // QVariant
 void ControlDesk::startEngine()
 {
 	QString path =  QCoreApplication::applicationDirPath();
-	QString executable = path + "/engine"; // NB! use make install to put them into same directory!  //  "/../engine/engine"; //
+	QString executable = path + "/engine";   "/../engine/engine"; //
 	qDebug() << executable;
 	//QString executable = "xterm -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
 	engineProcess->start(executable);
@@ -124,6 +124,8 @@ sr = 44100
 ksmps = 32
 nchnls = 2
 0dbfs = 1
+
+print 10/3
 
 ;; channels must be declared with chn_k
 chn_k "test",3

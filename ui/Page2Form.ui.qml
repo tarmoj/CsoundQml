@@ -18,7 +18,7 @@ Page {
     Loader {
         id: widgetsArea
         y: 6
-        height: parent.height * 0.3
+        height: parent.height * 0.5
         anchors {
             right: parent.right
             rightMargin: 6

@@ -109,6 +109,31 @@ void ControlDesk::compileCsd(QString csdText)
 
 }
 
+void ControlDesk::loadCsd(QUrl fileUrl)
+{
+    QString fileName = fileUrl.toLocalFile();
+    if (!QFile::exists(fileName)) {
+        qDebug() << fileName << " does not exist.";
+        emit errorMessage(fileName + " does not exist.");
+        return;
+    }   else {
+        emit newCsdContent(getFileContent(fileName) );
+    }
+
+    QString qmlName = fileName;
+    qmlName.replace(".csd", ".qml"); // TODO: uppercase
+    if (QFile::exists(qmlName)) {
+        emit newQmlContent(getFileContent(qmlName) );
+    }
+
+    QString htmlName = fileName;
+    htmlName.replace(".csd", ".html"); // TODO: uppercase
+    if (QFile::exists(htmlName)) {
+        //emit newQmlContent(getFileContent(htmlName) );
+        emit loadHtmlFile(QUrl::fromLocalFile(htmlName));
+    }
+}
+
 
 QString ControlDesk::getCsdTemplate()
 {
@@ -124,6 +149,8 @@ sr = 44100
 ksmps = 32
 nchnls = 2
 0dbfs = 1
+
+print 10/3
 
 ;; channels must be declared with chn_k
 chn_k "test",3
@@ -153,7 +180,19 @@ endin
 </CsScore>
 </CsoundSynthesizer>
 )";
-	return csdTemplate;
+    return csdTemplate;
+}
+
+QString ControlDesk::getFileContent(QString fileName)
+{
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return "Error opening file " + fileName;
+    }
+    QString csdText = QString(file.readAll());
+    return csdText;
+
 }
 
 void ControlDesk::testSlot(QString channel)

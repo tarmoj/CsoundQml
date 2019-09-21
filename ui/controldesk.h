@@ -24,6 +24,11 @@ signals:
 	void newCsoundMessage(QString message);
 	void newEngineState(QString state);
 	void channelValueReceived(QString channel, double value);
+    void newCsdContent(QString csdText);
+    void newQmlContent(QString qmlText);
+    void newHtmlContent(QString htmlText);
+    void loadHtmlFile(QUrl htmlFile);
+    void errorMessage(QString message);
 
 public Q_SLOTS:
 	void startEngine();
@@ -33,7 +38,8 @@ public Q_SLOTS:
 	void checkEngineProcess(QProcess::ProcessState newState);
 	void compileCsd(QString csdText);
 	//void compileCsd(QUrl csdFile);
-	QString getCsdTemplate();
+    void loadCsd(QUrl fileUrl);
+	QString getCsdTemplate();    
 	void testSlot(QString channel);
 	double getChannelValue(QString channel); // returns from channelValues hash
 
@@ -55,6 +61,8 @@ private:
 	QProcess * engineProcess;
 	QElapsedTimer heartBeatTime;
 	QHash <QString, double> channelValues;
+    QString  getFileContent(QString fileName);
+
 
 };
 

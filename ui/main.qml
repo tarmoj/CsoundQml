@@ -3,6 +3,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.0
 import Qt.labs.settings 1.0
+import QtWebKit 3.0 // later versions: QtWebView
 
 ApplicationWindow {
     visible: true
@@ -23,9 +24,28 @@ ApplicationWindow {
             //console.log(message);
             editorPage.messageArea.textArea.append(message) // this works! no workaround any more!
         }
+
+        onNewCsdContent: {
+            editorPage.csdArea.text = csdText;
+        }
+
+        onNewQmlContent: {
+           widgetsPage.widgetsText.text = qmlText;
+           widgetsPage.refreshButton.clicked();
+        }
+
+//        onNewHtmlContent: {
+//            console.log(htmlText);
+//        }
+        onLoadHtmlFile: {
+            console.log("Load html: ", htmlFile)
+            htmlPage.url = htmlFile;
+        }
+
     }
 
     Settings {
+        id: settings
         property alias lastCsdFile: openFileDialog.file
         property alias lastOpenFolder: openFileDialog.folder
         property alias lastSaveFolder: saveFileDialog.folder
@@ -66,7 +86,8 @@ ApplicationWindow {
         onAccepted: {
             folder = getBasename(file)
             saveFileDialog.currentFile = file // does not work
-            editorPage.csdArea.text = openFile(openFileDialog.file)
+            //editorPage.csdArea.text = openFile(openFileDialog.file)
+            csound.loadCsd(openFileDialog.file)
         }
     }
 
@@ -83,7 +104,7 @@ ApplicationWindow {
 
 
 
-    Component.onCompleted: editorPage.csdArea.text = csound.getCsdTemplate()
+    Component.onCompleted: csound.loadCsd(settings.lastCsdFile)
 
     Item {
 
@@ -171,6 +192,35 @@ ApplicationWindow {
                     setWidgetsTimer.start() // give some time for save to finish
                 }
             }
+
+            Page {
+                id: htmlPage // NB! websockets to csound not implemented yet!
+                property alias url: webview.url
+                width: 800
+                height: 600
+
+                Label {text: "Only Webview now. No connection to Csound."}
+
+                ScrollView {
+                    anchors.fill: parent
+                    anchors.topMargin: 50
+                    WebView {
+                        id: webview
+                        url: ""
+                        anchors.fill: parent
+//                        onNavigationRequested: {
+//                            // detect URL scheme prefix, most likely an external link
+//                            var schemaRE = /^\w+:/;
+//                            if (schemaRE.test(request.url)) {
+//                                request.action = WebView.AcceptRequest;
+//                            } else {
+//                                request.action = WebView.IgnoreRequest;
+//                                // delegate request.url here
+//                            }
+//                        }
+                    }
+                }
+            }
         }
     }
 
@@ -194,6 +244,10 @@ ApplicationWindow {
             }
             TabButton {
                 text: qsTr("Widgets")
+            }
+
+            TabButton {
+                text: qsTr("HTML")
             }
 
         }

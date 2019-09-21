@@ -43,6 +43,9 @@ void CsoundEngine::initConnections()
     connect(reptr.data(), SIGNAL(crashCsound()), this, SLOT(crash()) );
     connect(reptr.data(), SIGNAL(requestChannel(QString)), this, SLOT(handleChannelRequest(QString) ) );
 
+    connect(reptr.data(), SIGNAL(compileOrc(QString)), this, SLOT(compileOrc(QString)));
+    connect(reptr.data(), SIGNAL(readScore(QString)), this, SLOT(readScore(QString)));
+
 
 
 
@@ -193,10 +196,10 @@ QString CsoundEngine::getStringChannel(QString channel)
 
 
 
-void CsoundEngine::scoreEvent(QString event)
+void CsoundEngine::readScore(QString event)
 {
 	if (cs)
-		cs->InputMessage(event.toLocal8Bit());
+        cs->ReadScore(event.toLocal8Bit());
 }
 
 void CsoundEngine::setSFDIR(QUrl dir)

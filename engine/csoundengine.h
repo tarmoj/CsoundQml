@@ -36,7 +36,7 @@ public Q_SLOTS:
 	void play(QString csdText);
 	void stop();
     void pause();
-	void scoreEvent(QString event);
+    void readScore(QString event);
 	void setSFDIR(QUrl dir);
 	void compileOrc(QString code);
 	void crash(); // for testing

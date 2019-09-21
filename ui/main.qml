@@ -27,11 +27,13 @@ ApplicationWindow {
 
         onNewCsdContent: {
             editorPage.csdArea.text = csdText;
+
         }
 
         onNewQmlContent: {
            widgetsPage.widgetsText.text = qmlText;
            widgetsPage.refreshButton.clicked();
+           widgetsPage.qmlFile =  editorPage.csdFile.toString().replace(".csd", ".qml")
         }
 
 //        onNewHtmlContent: {
@@ -58,7 +60,7 @@ ApplicationWindow {
         return request.responseText;
     }
 
-    function saveFile(fileUrl, text) {
+    function saveFile(fileUrl, text) { // later maybe get rid of it and handle via C++ class
         var request = new XMLHttpRequest();
         request.open("PUT", fileUrl, false);
         request.send(text);
@@ -87,7 +89,8 @@ ApplicationWindow {
             folder = getBasename(file)
             saveFileDialog.currentFile = file // does not work
             //editorPage.csdArea.text = openFile(openFileDialog.file)
-            csound.loadCsd(openFileDialog.file)
+            csound.loadCsd(openFileDialog.file) // loads csd, qml and html from the same fodler if they are with the same name
+            editorPage.csdFile = file
         }
     }
 
@@ -99,6 +102,10 @@ ApplicationWindow {
         onAccepted: {
             folder = getBasename(file)
             saveFile(saveFileDialog.file, editorPage.csdArea.text)
+            if ( widgetsPage.qmlFile !== "" ) {
+                console.log ("Should save qml file, too.")
+                //saveFile(widgetsPage.qmlFile , widgetsPage.widgetsText.text)
+            }
         }
     }
 
@@ -111,69 +118,97 @@ ApplicationWindow {
 
         anchors.fill: parent
 
-        Row {
-            id: menuRow
+        Column {
+            id: menuColumn
             spacing: 5
-            Button {
-                id: startButton
-                text: "Play"
-                onClicked: {
-                    editorPage.messageArea.text = "" ; //clear
-                    csound.play(editorPage.csdArea.text)
+            x: 5; y:5
+
+            Row {
+                id: menuRow
+                spacing: 5
+
+
+                Button {
+                    id: openButton
+                    text: "Open"
+                    onClicked: openFileDialog.open()
+                }
+
+                Button {
+                    id: saveButton
+                    text: "Save"
+                    onClicked: saveFileDialog.open()
+                }
+
+
+                Button {
+                    id: engineButton
+                    text: qsTr("Restart engine")
+                    onClicked: csound.restartEngine()
+
+                }
+
+                Button {
+                    id: crashButton
+                    text: qsTr("Crash engine")
+                    onClicked: csound.crash()
+
                 }
 
             }
-            Button {
-                id: stopButton
-                text: "Stop"
-                onClicked: csound.stop()
+            Row {
+                id: menuRow2
+                spacing: 5
+                Button {
+                    id: startButton
+                    text: "Play"
+                    onClicked: {
+                        editorPage.messageArea.text = "" ; //clear
+                        csound.play(editorPage.csdArea.text)
+                    }
+
+                }
+                Button {
+                    id: stopButton
+                    text: "Stop"
+                    onClicked: csound.stop()
+                }
+
+                Button {
+                    id: evaluateButton
+                    text: "Eval. selection"
+                    onClicked: {
+                        var selectedText = editorPage.csdArea.textArea.selectedText
+                        console.log("selected: ", selectedText)
+                        if (selectedText.length > 0) {
+                            console.log("Compile: ", selectedText)
+                            csound.compileOrc(selectedText);
+                        }
+                    }
+                }
+
+
             }
-
-            Button {
-                id: openButton
-                text: "Open"
-                onClicked: openFileDialog.open()
-            }
-
-            Button {
-                id: saveButton
-                text: "Save"
-                onClicked: saveFileDialog.open()
-            }
-
-
-            Button {
-                id: engineButton
-                text: qsTr("Restart engine")
-                onClicked: csound.restartEngine()
-
-            }
-
-            Button {
-                id: crashButton
-                text: qsTr("Crash engine")
-                onClicked: csound.crash()
-
-            }
-
         }
 
         SwipeView {
             id: swipeView
             anchors.fill: parent
-            anchors.topMargin: menuRow.height + 5
+            anchors.topMargin: menuColumn.height + 5
             currentIndex: tabBar.currentIndex
 
             Page1Form {
                 id: editorPage
+                property url csdFile: ""
 
             }
 
             Page2Form {
                 id: widgetsPage
-                property string tempQmlFile: StandardPaths.writableLocation(StandardPaths.TempLocation) + "/tmp.qml"
+                property url qmlFile: ""
+                property url tempQmlFile: StandardPaths.writableLocation(StandardPaths.TempLocation) + "/tmp.qml"
 
-                Component.onCompleted: widgetsText.text = openFile("qrc:/demo.qml")
+                Component.onCompleted: if (qmlFile==="") widgetsText.text = openFile("qrc:/demo.qml")
 
 
                 Timer { // necessary to set the source  a bit later. Bad code. Use some signal/event on save XML request

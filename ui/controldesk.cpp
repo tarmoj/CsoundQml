@@ -58,6 +58,7 @@ void ControlDesk::startEngine()
 	qDebug() << executable;
 	//QString executable = "xterm -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
 	engineProcess->start(executable);
+    //QObject::connect(engineProcess, SIGNAL(readyRead()) )
 	heartBeatTime.start();
 	connect(engineProcess, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(checkEngineProcess(QProcess::ProcessState))  );
 	checkEngineTimer->start(1000);

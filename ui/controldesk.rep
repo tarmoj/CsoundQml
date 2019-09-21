@@ -22,6 +22,8 @@ class ControlDesk
 	SIGNAL(newStringChannelValue(QString channel, QString value));
     SIGNAL(requestChannel(QString channel)); // TODO: rename with the same principle liks requestChannelValueSignal
     SIGNAL(crashCsound());
+    SIGNAL(compileOrc(QString code));
+    SIGNAL(readScore(QString score));
 
 
 

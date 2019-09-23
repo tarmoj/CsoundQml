@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QProcess>
 #include <QElapsedTimer>
+#include <QFileSystemWatcher>
 
 #include "rep_controldesk_source.h"
 
@@ -54,6 +55,9 @@ public Q_SLOTS:
     // for testing only
     void crash() {  emit crashCsound(); }
 
+private Q_SLOTS:
+	void handleFileChange(QString fileName);
+
 
 private:
     int engineState;
@@ -62,6 +66,7 @@ private:
 	QElapsedTimer heartBeatTime;
 	QHash <QString, double> channelValues;
     QString  getFileContent(QString fileName);
+	QFileSystemWatcher fileWatcher;
 
 
 };

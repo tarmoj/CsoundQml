@@ -7,7 +7,7 @@ ControlDesk::ControlDesk(QObject *parent) : ControlDeskSimpleSource (parent),
 	checkEngineTimer(new QTimer(this)), engineProcess(new QProcess(this))
 {
 	startEngine();
-
+	QObject::connect(&fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleFileChange(QString))  );
 }
 
 ControlDesk::~ControlDesk()
@@ -119,12 +119,14 @@ void ControlDesk::loadCsd(QUrl fileUrl)
         return;
     }   else {
         emit newCsdContent(getFileContent(fileName) );
+		fileWatcher.addPath(fileName); // TODO: how to remove if another was already loaded? activeCsd, activeQml etc variables?
     }
 
     QString qmlName = fileName;
     qmlName.replace(".csd", ".qml"); // TODO: uppercase
     if (QFile::exists(qmlName)) {
         emit newQmlContent(getFileContent(qmlName) );
+		fileWatcher.addPath(qmlName);
     }
 
     QString htmlName = fileName;
@@ -211,6 +213,18 @@ double ControlDesk::getChannelValue(QString channel)
 		qDebug() << "Channel " << channel << " is unknown. Have you requested it?";
 	}
 	return  value;
+}
+
+void ControlDesk::handleFileChange(QString fileName)
+{
+	if (fileName.contains(".csd")) {
+		emit newCsdContent(getFileContent(fileName))  ; // this will reload also qml... although should not
+		qDebug() << "CSD updated.";
+	} else if (fileName.contains(".qml")) {
+		emit newQmlContent(getFileContent(fileName))  ; // this will reload also qml... although should not
+		qDebug() << "QML updated.";
+	}
+	//TODO: html
 }
 
 

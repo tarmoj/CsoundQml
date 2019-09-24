@@ -184,6 +184,7 @@ ApplicationWindow {
                             console.log("Compile: ", selectedText)
                             csound.compileOrc(selectedText);
                         }
+                        editorPage.csdArea.textArea.deselect()
                     }
                 }
 
@@ -200,6 +201,8 @@ ApplicationWindow {
             Page1Form {
                 id: editorPage
                 property url csdFile: ""
+
+                //csdArea.textArea.onSelectedTextChanged: console.log("SelText: ", csdArea.textArea.selectedText )
 
             }
 

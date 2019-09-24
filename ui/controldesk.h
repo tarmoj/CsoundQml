@@ -57,6 +57,8 @@ public Q_SLOTS:
 
 private Q_SLOTS:
 	void handleFileChange(QString fileName);
+	void handleProcessOutput();
+
 
 
 private:

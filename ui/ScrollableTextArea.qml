@@ -8,6 +8,7 @@ ScrollView {
     property alias text: textArea.text
     clip: true
 
+
     background: Rectangle {
         color: "#323232" //Material.background //Qt.lighter(Material.background);
         border.color: "#404040"
@@ -18,5 +19,7 @@ ScrollView {
     TextArea {
         id: textArea
         selectByMouse: true
+        persistentSelection: true // maybe not heare
+
     }
 }

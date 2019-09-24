@@ -57,8 +57,10 @@ void ControlDesk::startEngine()
 	QString executable = path + "/engine";   "/../engine/engine"; //
 	qDebug() << executable;
 	//QString executable = "xterm -e /home/tarmo/tarmo/programm/qt-projects/CsoundQml/build-csoundqml-Qt5_desktop-Debug/engine/engine &"; // TODO: make universal
+	engineProcess->setProcessChannelMode(QProcess::ForwardedChannels);
 	engineProcess->start(executable);
-    //QObject::connect(engineProcess, SIGNAL(readyRead()) )
+	//TODO: forward to console of UI;
+	// QObject::connect(engineProcess, SIGNAL(readyRead()), this, SLOT(handleProcessOutput()) ); does not work
 	heartBeatTime.start();
 	connect(engineProcess, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(checkEngineProcess(QProcess::ProcessState))  );
 	checkEngineTimer->start(1000);
@@ -120,6 +122,7 @@ void ControlDesk::loadCsd(QUrl fileUrl)
     }   else {
         emit newCsdContent(getFileContent(fileName) );
 		fileWatcher.addPath(fileName); // TODO: how to remove if another was already loaded? activeCsd, activeQml etc variables?
+		fileWatcher.addPath("/home/tarmo/tarmo/csound/csoundQml-test/");
     }
 
     QString qmlName = fileName;
@@ -225,6 +228,19 @@ void ControlDesk::handleFileChange(QString fileName)
 		qDebug() << "QML updated.";
 	}
 	//TODO: html
+	// seems necessary to add it back:
+	if (QFile::exists(fileName)) {
+		fileWatcher.addPath(fileName);
+	} else {
+		qDebug() << "File is gone!";
+	}
 }
+
+void ControlDesk::handleProcessOutput()
+{
+	QByteArray data = engineProcess->readAll();
+	qDebug() << "READ: " << data;
+}
+
 
 
